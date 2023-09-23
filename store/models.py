@@ -3,19 +3,23 @@ from django.db import models
 
 # Create your models here.
 class Product(models.Model):
+    sku = models.CharField(max_length=100, blank=True, null=True)
     name = models.CharField(max_length=100)
     price = models.FloatField(default=0.0)
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='product_images', blank=True, null=True)
-    category = models.ForeignKey('Category', on_delete=models.CASCADE)
-    color = models.ForeignKey('Color', on_delete=models.CASCADE)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, blank=True, null=True)
+    color = models.ForeignKey('Color', on_delete=models.CASCADE, blank=True, null=True)
     available_quantity = models.IntegerField(default=0, blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ('-created',)
+
     def __str__(self) -> str:
-        return str(self.name)
+        return f'{self.name}'
 
 
 class Category(models.Model):

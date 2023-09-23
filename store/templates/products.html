@@ -33,11 +33,17 @@
             </a>
         </span>
         <div class="orders-list relative overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="products-table">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             Product name
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            SKU
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Available, pcs
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Color
@@ -49,16 +55,27 @@
                             Price
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Added
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Actions
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for product in products %}
-                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900" id="product-row-{{product.id}}">
                             <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
                                 {{ product.name }}
                             </th>
+                            <td class="px-6 py-4">
+                                {% if product.sku %}
+                                    {{ product.sku }}
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ product.available_quantity }}
+                            </td>
                             <td class="px-6 py-4">
                                 {{ product.color }}
                             </td>
@@ -67,6 +84,9 @@
                             </td>
                             <td class="px-6 py-4">
                                 ${{ product.price }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ product.created }}
                             </td>
                             <td class="px-6 py-4">
                                 <button
@@ -88,19 +108,19 @@
             </table>
         </div>
     </div>
-    <div id="form-spawn">
-    {% if product %}
-        {% include 'partials/editProductForm.html' %}
-    {% endif %}
-    </div>
-    <div id="create-form-spawn" class="bg-secondary w-full mx-auto p-3 rounded-xl h-fit"
-        x-show="showCreateForm"
-        x-transition
-        x-cloak>
-        {% include 'partials/createProductForm.html' %}
-        {% if product %}
-            {% include 'partials/editProductForm.html' %}
-        {% endif %}
+    <div class="flex flex-col gap-5">
+        <div id="create-form-spawn" class="bg-secondary w-full mx-auto p-3 rounded-xl h-fit"
+            x-show="showCreateForm"
+            x-transition
+            x-cloak>
+            {% include 'partials/createProductForm.html' %}
+        </div>
+        <div id="form-spawn">
+            {% if product %}
+                {% include 'partials/editProductForm.html' %}
+            {% endif %}
+        </div>
+        
     </div>
 </div>
 

@@ -1,9 +1,10 @@
 <h1  class="text-left text-3xl font-extrabold">Add New Product</h1>
 <form 
-    hx-post="{% url 'signup_view' %}" 
-    hx-target="form" 
-    hx-swap="outerHTML" 
-    hx-select="form" 
+    hx-post="{% url 'products_view' %}" 
+    hx-target="body"
+    hx-push-url="true"
+    hx-select="body"
+    hx-swap="innerHTML"
     class="flex flex-col space-y-5 py-10">
     <div class="flex gap-2">
         <div class="w-full">
@@ -17,31 +18,39 @@
         </div>
         <div class="w-full">
             <label for="category" class="block mb-2 text-sm font-medium text-gray-900 ">Select product category</label>
-            <select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                <option>N/A</option>
-                <option>Phones</option>
-                <option>PC</option>
-                <option>Media</option>
-                <option>Other</option>
+            <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <option value="">N/A</option>
+                {% for category in categories %}
+                    <option {% if product.category.name == category.name %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>
     <div class="flex gap-2">
         <div class="w-full">
-            <label for="colors" class="block mb-2 text-sm font-medium text-gray-900 ">Select product color</label>
-            <select id="colors" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                <option>------</option>
-                <option>Yellow</option>
-                <option>Gray</option>
-                <option>Green</option>
-                <option>Black</option>
-                <option>White</option>
+            <label for="color" class="block mb-2 text-sm font-medium text-gray-900 ">Select product color</label>
+            <select id="color" name="color" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <option value="">N/A</option>
+                {% for color in colors %}
+                    <option {% if product.color.name == color.name %}selected{% endif %}>{{ color.name }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="w-full">
             <label for="price" class="block mb-2 text-sm font-medium text-gray-900 ">Enter product price, $</label>
             <input required type="number" min="0" name="price" placeholder="Product price" id="price" value="{{ submitted_price}}"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                {% if fname_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
+            {% if fname_error %}
+                <span class="text-action-danger">{{ fname_error }}</span>            
+            {% endif %}
+        </div>
+    </div>
+    <div class="flex gap-2">
+        <div class="w-full">
+            <label for="available_quantity" class="block mb-2 text-sm font-medium text-gray-900 ">Enter available quantity, pcs</label>
+            <input type="number" min="0" name="available_quantity" placeholder="Available, pcs" id="available_quantity" value="{{ submitted_q}}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
                 {% if fname_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
             {% if fname_error %}
                 <span class="text-action-danger">{{ fname_error }}</span>            

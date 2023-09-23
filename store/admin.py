@@ -7,11 +7,11 @@ from .models import Product, Category, Color
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'category', 'color', 'available_quantity',
+    list_display = ('name', 'price', 'sku', 'category', 'color', 'available_quantity',
                     'created', 'updated')
     list_filter = ('category', 'color',)
     # list_editable = ('price',)
-    search_fields = ('name', 'category', 'color')
+    search_fields = ('name', 'category', 'color', 'sku')
     date_hierarchy = 'created'
     ordering = ('-created',)
 
