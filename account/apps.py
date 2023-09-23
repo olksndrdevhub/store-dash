@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class StoreAdminConfig(AppConfig):
+class AccountConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'store_admin'
+    name = 'account'

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard |{% endblock title %}
+
+{% block content %}
+    <div class="border border-dashed rounded-lg p-5">
+        <div class="flex justify-around">
+            <div class=" bg-background-secondary py-5 pl-5 pr-10 flex rounded-xl justify-between">
+                <span class="p-3 mr-5 rounded-full bg-active-dimmed">
+                    <svg class="w-7 h-7" width="512" height="512" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#000000" d="m17.578 4.432l-2-1.05C13.822 2.461 12.944 2 12 2s-1.822.46-3.578 1.382l-.321.169l8.923 5.099l4.016-2.01c-.646-.732-1.688-1.279-3.462-2.21Zm4.17 3.532l-3.998 2V13a.75.75 0 0 1-1.5 0v-2.287l-3.5 1.75v9.441c.718-.179 1.535-.607 2.828-1.286l2-1.05c2.151-1.129 3.227-1.693 3.825-2.708c.597-1.014.597-2.277.597-4.8v-.117c0-1.893 0-3.076-.252-3.978ZM11.25 21.904v-9.44l-8.998-4.5C2 8.866 2 10.05 2 11.941v.117c0 2.525 0 3.788.597 4.802c.598 1.015 1.674 1.58 3.825 2.709l2 1.049c1.293.679 2.11 1.107 2.828 1.286ZM2.96 6.641l9.04 4.52l3.411-1.705l-8.886-5.078l-.103.054c-1.773.93-2.816 1.477-3.462 2.21Z"/>
+                    </svg>
+                </span>
+                <span class="flex flex-col justify-between">
+                    <h3 class="text-text-dimmed">Total products</h3>
+                    <span class="flex justify-around">
+                        <p class="text-xl">250</p>
+                        <span class="flex">
+                            <svg class="h-5 w-5 fill-action-success" width="512" height="512" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm12 3a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-4a1 1 0 1 0 0 2h1.586l-2.293 2.293a1 1 0 1 0 1.414 1.414L13 12.414V14a1 1 0 0 0 1 1Z" clip-rule="evenodd"/>
+                            </svg>
+                            <p class="text-sm text-action-success">+ 2,5%</p>
+                        </span>
+                    </span>
+                </span>
+            </div>
+            <div class=" bg-background-secondary py-5 pl-5 pr-10 flex rounded-xl justify-between">
+                <span class="p-3 mr-5 rounded-full bg-active-dimmed">
+                    <svg class="w-7 h-7" width="512" height="512" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#000000" d="m17.275 18.125l-.425-.425q-.225-.225-.537-.225t-.538.225q-.225.225-.225.525t.225.525l.975.975q.225.225.525.225t.525-.225l2.425-2.375q.225-.225.225-.538t-.225-.537q-.225-.225-.538-.225t-.537.225l-1.875 1.85ZM17 9q.425 0 .713-.288T18 8q0-.425-.288-.713T17 7H7q-.425 0-.713.288T6 8q0 .425.288.713T7 9h10Zm1 14q-2.075 0-3.537-1.463T13 18q0-2.075 1.463-3.538T18 13q2.075 0 3.538 1.463T23 18q0 2.075-1.463 3.538T18 23ZM5 3h14q.825 0 1.413.588T21 5v6.675q-.7-.35-1.463-.513T18 11H7q-.425 0-.713.288T6 12q0 .425.288.713T7 13h6.1q-.425.425-.787.925T11.675 15H7q-.425 0-.713.288T6 16q0 .425.288.713T7 17h4.075q-.05.25-.063.488T11 18q0 1.05.288 2.013t.862 1.837q-.125.025-.263-.038t-.237-.162l-.8-.8q-.15-.15-.35-.15t-.35.15l-.8.8q-.15.15-.35.15t-.35-.15l-.8-.8q-.15-.15-.35-.15t-.35.15l-.8.8q-.15.15-.35.15t-.35-.15l-.8-.8q-.15-.15-.35-.15t-.35.15l-.8.8l-.35.225V5q0-.825.588-1.413T5 3Z"/>
+                    </svg>
+                </span>
+                <span class="flex flex-col justify-between">
+                    <h3 class="text-text-dimmed">Completed orders</h3>
+                    <span class="flex justify-around">
+                        <p class="text-xl">250</p>
+                        <span class="flex">
+                            <svg class="h-5 w-5 fill-action-success" width="512" height="512" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm12 3a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-4a1 1 0 1 0 0 2h1.586l-2.293 2.293a1 1 0 1 0 1.414 1.414L13 12.414V14a1 1 0 0 0 1 1Z" clip-rule="evenodd"/>
+                            </svg>
+                            <p class="text-sm text-action-success">+ 2,5%</p>
+                        </span>
+                    </span>
+                </span>
+            </div>
+            <div class=" bg-background-secondary py-5 pl-5 pr-10 flex rounded-xl justify-between">
+                <span class="p-3 mr-5 rounded-full bg-active-dimmed">
+                    <svg class="w-7 h-7" width="512" height="512" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#000000" d="M11.5 6H2v5.5A2.5 2.5 0 0 0 4.5 14h2.1a5.5 5.5 0 0 1 4.9-8ZM14 4.5A2.5 2.5 0 0 0 11.5 2h-7A2.5 2.5 0 0 0 2 4.5V5h12v-.5Zm2 7a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0Zm-2.646-1.146a.5.5 0 0 0-.708-.708L11.5 10.793l-1.146-1.147a.5.5 0 0 0-.708.708l1.147 1.146l-1.147 1.146a.5.5 0 0 0 .708.708l1.146-1.147l1.146 1.147a.5.5 0 0 0 .708-.708L12.207 11.5l1.147-1.146Z"/>
+                    </svg>
+                </span>
+                <span class="flex flex-col justify-between">
+                    <h3 class="text-text-dimmed">Canceled orders</h3>
+                    <span class="flex justify-around">
+                        <p class="text-xl">17</p>
+                        <span class="flex">
+                            <svg class="w-5 h-5 fill-action-danger" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <mask id="ipSCircleRightDown0">
+                                    <g stroke-linejoin="round" stroke-width="4">
+                                        <path stroke="#fff" d="M24 44c11.046 0 20-8.954 20-20S35.046 4 24 4S4 12.954 4 24s8.954 20 20 20Z"/>
+                                        <path stroke="#000" stroke-linecap="round" d="M31 31L17 17m2 14h12V19"/>
+                                    </g>
+                                </mask>
+                                <path fill="#000000" d="M0 0h48v48H0z" mask="url(#ipSCircleRightDown0)"/>
+                            </svg>
+                            <p class="text-sm text-action-danger">- 2,5%</p>
+                        </span>
+                    </span>
+                </span>
+            </div>
+            <div class=" bg-background-secondary py-5 pl-5 pr-10 flex rounded-xl justify-between">
+                <span class="p-3 mr-5 rounded-full bg-active-dimmed">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path d="M0 0h24v24H0z"/>
+                            <path fill="#000000" d="m19.496 13.983l1.966 3.406a1.001 1.001 0 0 1-.705 1.488l-.113.011l-.112-.001l-2.933-.19l-1.303 2.636a1.001 1.001 0 0 1-1.608.26l-.082-.094l-.072-.11l-1.968-3.407a8.994 8.994 0 0 0 6.93-3.999zm-8.066 3.999L9.464 21.39a1.001 1.001 0 0 1-1.622.157l-.076-.1l-.064-.114l-1.304-2.635l-2.931.19a1.001 1.001 0 0 1-1.022-1.29l.04-.107l.05-.1l1.968-3.409a8.994 8.994 0 0 0 6.927 4.001zM12 2l.24.004A7 7 0 0 1 19 9l-.003.193l-.007.192l-.018.245l-.026.242l-.024.178a6.985 6.985 0 0 1-.317 1.268l-.116.308l-.153.348a7.001 7.001 0 0 1-12.688-.028l-.13-.297l-.052-.133l-.08-.217l-.095-.294a6.96 6.96 0 0 1-.093-.344l-.06-.271l-.049-.271l-.02-.139l-.039-.323l-.024-.365L5 9a7 7 0 0 1 6.76-6.996L12 2z"/>
+                        </g>
+                    </svg>
+                </span>
+                <span class="flex flex-col justify-between">
+                    <h3 class="text-text-dimmed">Top products</h3>
+                    <span class="flex justify-around">
+                        <p class="text-xl">8</p>
+                        <span class="flex">
+                            <svg class="h-5 w-5 fill-action-success" width="512" height="512" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm12 3a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-4a1 1 0 1 0 0 2h1.586l-2.293 2.293a1 1 0 1 0 1.414 1.414L13 12.414V14a1 1 0 0 0 1 1Z" clip-rule="evenodd"/>
+                            </svg>
+                            <p class="text-sm text-action-success">+ 2,5%</p>
+                        </span>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div class="mt-10">
+           <div class="header flex justify-between">
+                <span>
+                    <h3 class="text-2xl">Your sales report</h3>
+                    <p class="text-text-dimmed">Look at your sales</p>
+                </span>
+                <span>
+                    <select name="" id="" class="bg-background border text-text-dimmed border-active-dimmed text-gray-900 text-sm rounded-2xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
+                        <option value="sales">Total Sales</option>
+                        <option value="clients">Total Clients</option>
+                        <option value="income">Total Income</option>
+                    </select>
+                </span>
+           </div>
+        <div class="chart flex">
+            <div>
+                <span class="">
+                    <p class="text-5xl">$4,435.70</p>
+                    <span>
+                        <span class="flex">
+                            <svg class="h-5 w-5 fill-action-success" width="512" height="512" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm12 3a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-4a1 1 0 1 0 0 2h1.586l-2.293 2.293a1 1 0 1 0 1.414 1.414L13 12.414V14a1 1 0 0 0 1 1Z" clip-rule="evenodd"/>
+                            </svg>
+                            <p class="text-sm text-action-success">$2,330.00 (+2,5%)</p>
+                        </span>
+                    </span>
+                </span>
+                <span>
+                    <ul class="flex space-x-3">
+                        <li class="px-2 py-1">1d</li>
+                        <li class="px-2 py-1 align-middle text-text-minor bg-active rounded-2xl">7d</li>
+                        <li class="px-2 py-1">1m</li>
+                        <li class="px-2 py-1">6m</li>
+                        <li class="px-2 py-1">max</li>
+                    </ul>
+                </span>
+            </div>
+            <div>
+                <span>
+                    GRAPH
+                </span>
+            </div>
+           </div>
+        </div>
+        <div class="flex w-full">
+            <div class="w-72">
+                <div class="header flex justify-between">
+                    <span>Last transactions</span>
+                    <span>search</span>
+                </div>
+                <div class="table">
+
+                </div>
+            </div>
+            <div class="w-28">
+                slides
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block additional_javascript %}{% endblock additional_javascript %}

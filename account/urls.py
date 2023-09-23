@@ -16,6 +16,14 @@ Including another URLconf
 """
 from django.urls import path
 
-urlpatterns = [
+from . import views
 
+urlpatterns = [
+    path('signin/', views.signin_view, name='signin_view'),
+    path('signup/', views.signup_view, name='signup_view'),
+    path('signout/', views.signout_view, name='signout_view'),
+    path('', views.profile_view, name='profile_view'),
+
+    # hx urls
+    path('hx-update-userpic/', views.hx_update_userpic, name='hx_update_userpic'),
 ]

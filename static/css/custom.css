@@ -1,0 +1,50 @@
+[x-cloak] { display: none !important; }
+
+.invalid-feedback {
+    display: none;
+}
+.invalid-feedback.show {
+    color: red;
+    display: block;
+}
+
+/* .theme-light {
+    --text: #080703;
+    --text-secondary: #201c0b;
+    --text-minor: #545454;
+    --text-light: #f0f0f0;
+    --text-dark: #080703;
+    --background: #fafafa;
+    --background-secondary: #ececec;
+    --primary: #85b03b;
+    --secondary: #bac0e8;
+    --secondary-dark: #959aba;
+    --accent: #5d36a1;
+}
+.theme-dark {
+    --text: #fcf7f7;
+    --text-secondary: #dfdfdf;
+    --text-minor: #bdbdbd;
+    --text-light: #f0f0f0;
+    --text-dark: #080703;
+    --background: #2e2c54;
+    --background-secondary: #242247;
+    --primary: #85b03b;
+    --secondary: #393760;
+    --secondary-dark: #4d4b70;
+    --accent: #8871e6;
+} */
+body {
+    font-family: 'Exo 2', sans-serif;
+}
+
+.error-message {
+    color:red;
+  }
+input.validation-error {
+    box-shadow: 0 0 3px #CC0000;
+}
+input.valid {
+    box-shadow: 0 0 3px #36cc00;
+}
+[x-cloak] { display: none !important; }
