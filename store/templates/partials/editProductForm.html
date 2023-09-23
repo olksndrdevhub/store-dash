@@ -1,0 +1,66 @@
+<div class="bg-secondary w-full mx-auto p-3 rounded-xl h-fit" id="edit-product-form">
+    <h1 class="text-left text-3xl font-extrabold">{{ product.name }}</h1>
+    <form 
+        hx-post="{% url 'signup_view' %}" 
+        hx-target="form" 
+        hx-swap="outerHTML" 
+        hx-select="form" 
+        class="flex flex-col space-y-5 py-10">
+        <div class="flex gap-2">
+            <div class="w-full">
+                <label for="name" class="block mb-2 text-sm font-medium text-gray-900 ">Enter product name</label>
+                <input required type="text" name="name" placeholder="Product name" id="name" value="{{ product.name }}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                    {% if fname_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
+                {% if fname_error %}
+                    <span class="text-action-danger">{{ fname_error }}</span>            
+                {% endif %}
+            </div>
+            <div class="w-full">
+                <label for="category" class="block mb-2 text-sm font-medium text-gray-900 ">Select product category</label>
+                <select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    <option>N/A</option>
+                    <option>Phones</option>
+                    <option>PC</option>
+                    <option>Media</option>
+                    <option>Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <div class="w-full">
+                <label for="colors" class="block mb-2 text-sm font-medium text-gray-900 ">Select product color</label>
+                <select id="colors" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    <option>------</option>
+                    <option>Yellow</option>
+                    <option>Gray</option>
+                    <option>Green</option>
+                    <option>Black</option>
+                    <option>White</option>
+                </select>
+            </div>
+            <div class="w-full">
+                <label for="price" class="block mb-2 text-sm font-medium text-gray-900 ">Enter product price, $</label>
+                <input required type="number" min="0" name="price" placeholder="Product price" id="price" value="{{ product.price }}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                    {% if fname_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
+                {% if fname_error %}
+                    <span class="text-action-danger">{{ fname_error }}</span>            
+                {% endif %}
+            </div>
+        </div>
+        <div class="flex justify-between">
+            <button type="reset" class="border border-accent px-5 py-2.5
+                my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
+                transition transform duration-200 ease-in-out hover:cursor-pointer"
+                x-on:click="showCreateForm = ! showCreateForm">
+                Cancel
+            </button>
+            <button type="submit" class="bg-action-success text-white px-5 py-2.5
+                my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
+                transition transform duration-200 ease-in-out hover:cursor-pointer">
+                Save
+            </button>
+        </div>
+    </form>
+</div>

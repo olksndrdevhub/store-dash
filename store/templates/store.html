@@ -1,0 +1,460 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Store |{% endblock title %}
+
+{% block additional_head_links %}{% endblock additional_head_links %}
+{% block additional_css %}{% endblock additional_css %}
+
+{% block content %}
+    <div class="wrapper grid grid-cols-1 xl:grid-cols-2 gap-5"
+        hx-boost="true"
+        hx-push-url="true"
+        hx-target="body">
+        <div class="bg-secondary w-[90vw] xl:w-11/12 mx-auto p-3 rounded-xl">
+            <span class="head mb-5 flex justify-between">
+                <h1 class="text-left text-3xl font-extrabold">Orders</h1>
+                <form class="w-3/6">   
+                    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                        </div>
+                        <input type="search" id="default-search" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Search Orders..." required>
+                        <button type="submit" class="text-gray-900 absolute right-2.5 bottom-1.5 rounded-lg text-sm px-4 py-1 bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointe focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium">Search</button>
+                    </div>
+                </form>
+                <a 
+                    hx-get="{% url 'orders_view' %}"
+                    class="flex items-center py-2 pl-3 pr-4 text-gray-900 rounded-xl bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer">
+                    View all
+                    <svg width="30" height="40" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none">
+                            <path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/>
+                            <path fill="#000000" d="m15.06 5.283l5.657 5.657a1.5 1.5 0 0 1 0 2.12l-5.656 5.658a1.5 1.5 0 0 1-2.122-2.122l3.096-3.096H4.5a1.5 1.5 0 0 1 0-3h11.535L12.94 7.404a1.5 1.5 0 0 1 2.122-2.121Z"/>
+                        </g>
+                    </svg>
+                </a>
+            </span>
+            <div class="orders-list relative overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Order ID
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Client
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Datetime
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Total, $
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                00001
+                            </th>
+                            <td class="px-6 py-4">
+                                client@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                23/09/2023
+                            </td>
+                            <td class="px-6 py-4">
+                                $2999
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                00002
+                            </th>
+                            <td class="px-6 py-4">
+                                client@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                23/09/2023
+                            </td>
+                            <td class="px-6 py-4">
+                                $1999
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                00003
+                            </th>
+                            <td class="px-6 py-4">
+                                client@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                23/09/2023
+                            </td>
+                            <td class="px-6 py-4">
+                                $99
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                00003
+                            </th>
+                            <td class="px-6 py-4">
+                                client@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                23/09/2023
+                            </td>
+                            <td class="px-6 py-4">
+                                $99
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                00003
+                            </th>
+                            <td class="px-6 py-4">
+                                client@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                23/09/2023
+                            </td>
+                            <td class="px-6 py-4">
+                                $99
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                00003
+                            </th>
+                            <td class="px-6 py-4">
+                                client@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                23/09/2023
+                            </td>
+                            <td class="px-6 py-4">
+                                $99
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bg-secondary w-[90vw] xl:w-11/12 mx-auto p-3 rounded-xl">
+            <span class="head mb-5 flex justify-between">
+                <h1 class="text-left text-3xl font-extrabold">Products</h1>
+                <form class="w-3/6">   
+                    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                        </div>
+                        <input type="search" id="default-search" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Search Products..." required>
+                        <button type="submit" class="text-gray-900 absolute right-2.5 bottom-1.5 rounded-lg text-sm px-4 py-1 bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointe focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium">Search</button>
+                    </div>
+                </form>
+                <a 
+                hx-get="{% url 'products_view' %}"
+                    class="flex items-center py-2 pl-3 pr-4 text-gray-900 rounded-xl bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer">
+                    View all
+                    <svg width="30" height="40" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none">
+                            <path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/>
+                            <path fill="#000000" d="m15.06 5.283l5.657 5.657a1.5 1.5 0 0 1 0 2.12l-5.656 5.658a1.5 1.5 0 0 1-2.122-2.122l3.096-3.096H4.5a1.5 1.5 0 0 1 0-3h11.535L12.94 7.404a1.5 1.5 0 0 1 2.122-2.121Z"/>
+                        </g>
+                    </svg>
+                </a>
+            </span>
+            <div class="products-list relative overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Product name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Color
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Category
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Price
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Apple MacBook Pro 17"
+                            </th>
+                            <td class="px-6 py-4">
+                                Silver
+                            </td>
+                            <td class="px-6 py-4">
+                                Laptop
+                            </td>
+                            <td class="px-6 py-4">
+                                $2999
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Microsoft Surface Pro
+                            </th>
+                            <td class="px-6 py-4">
+                                White
+                            </td>
+                            <td class="px-6 py-4">
+                                Laptop PC
+                            </td>
+                            <td class="px-6 py-4">
+                                $1999
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Magic Mouse 2
+                            </th>
+                            <td class="px-6 py-4">
+                                Black
+                            </td>
+                            <td class="px-6 py-4">
+                                Accessories
+                            </td>
+                            <td class="px-6 py-4">
+                                $99
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Magic Mouse 2
+                            </th>
+                            <td class="px-6 py-4">
+                                Black
+                            </td>
+                            <td class="px-6 py-4">
+                                Accessories
+                            </td>
+                            <td class="px-6 py-4">
+                                $99
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Magic Mouse 2
+                            </th>
+                            <td class="px-6 py-4">
+                                Black
+                            </td>
+                            <td class="px-6 py-4">
+                                Accessories
+                            </td>
+                            <td class="px-6 py-4">
+                                $99
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bg-secondary w-[90vw] xl:w-11/12 mx-auto p-3 rounded-xl">
+            <span class="head mb-5 flex justify-between">
+                <h1 class="text-left text-3xl font-extrabold">Clients</h1>
+                <form class="w-3/6">   
+                    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                        </div>
+                        <input type="search" id="default-search" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Search Clients..." required>
+                        <button type="submit" class="text-gray-900 absolute right-2.5 bottom-1.5 rounded-lg text-sm px-4 py-1 bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointe focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium">Search</button>
+                    </div>
+                </form>
+                <a 
+                hx-get="{% url 'clients_view' %}"
+                    class="flex items-center py-2 pl-3 pr-4 text-gray-900 rounded-xl bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer">
+                    View all
+                    <svg width="30" height="40" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none">
+                            <path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/>
+                            <path fill="#000000" d="m15.06 5.283l5.657 5.657a1.5 1.5 0 0 1 0 2.12l-5.656 5.658a1.5 1.5 0 0 1-2.122-2.122l3.096-3.096H4.5a1.5 1.5 0 0 1 0-3h11.535L12.94 7.404a1.5 1.5 0 0 1 2.122-2.121Z"/>
+                        </g>
+                    </svg>
+                </a>
+            </span>
+            <div class="clients-list relative overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Full name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Email
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Orders count <br>(Not completed | Total)
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Elithabeth Olsen
+                            </th>
+                            <td class="px-6 py-4">
+                                elithabeth@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-action-danger">
+                                    <a href="">
+                                        Show
+                                    </a>
+                                    0
+                                </span> | 
+                                <span class="text-action-success">10</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Enrico Fermi
+                            </th>
+                            <td class="px-6 py-4">
+                                enrico@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-action-danger">
+                                    <a href="">
+                                        Show
+                                    </a>
+                                    0
+                                </span> | 
+                                <span class="text-action-success">10</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Enrico Fermi
+                            </th>
+                            <td class="px-6 py-4">
+                                enrico@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-action-danger">
+                                    <a href="">
+                                        Show
+                                    </a>
+                                    0
+                                </span> | 
+                                <span class="text-action-success">10</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Enrico Fermi
+                            </th>
+                            <td class="px-6 py-4">
+                                enrico@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-action-danger">
+                                    <a href="">
+                                        Show
+                                    </a>
+                                    0
+                                </span> | 
+                                <span class="text-action-success">10</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-100 text-gray-900">
+                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                                Joshua Bloch
+                            </th>
+                            <td class="px-6 py-4">
+                                joshua@mail.com
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-action-danger">
+                                    <a href="">
+                                        Show
+                                    </a>
+                                    0
+                                </span> | 
+                                <span class="text-action-success">10</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                View, Edit, Delete
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block additional_javascript %}{% endblock additional_javascript %}

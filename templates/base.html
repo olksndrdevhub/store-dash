@@ -21,13 +21,13 @@
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="bg-primary">
 
-    <nav class="bg-white border-gray-200 dark:bg-gray-900"
+    <nav class=" bg-primary border-gray-200"
         x-data="{ showMenu: false }"
         x-init="showMenu = window.innerWidth > 768"
         x-on:resize.window="window.innerWidth > 768 ? showMenu = true : showMenu = false">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <span>
-                <h1 hx-get="{% url 'home_view' %}" hx-swap="outerHTML" ht-push-url="true" hx-target="body" class="text-3xl font-black pb-5 border-accent border-b-2 hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer">StoreDash</h1>
+                <h1 hx-get="{% url 'home_view' %}" hx-swap="outerHTML" hx-push-url="true" hx-target="body" class="text-3xl font-black pb-5 border-accent border-b-2 hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer">StoreDash</h1>
                 <a href="emailto:sales@storedash.com" class="pt-2 flex hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer">
                     <p class="pt-2">sales@storedash.com</p>
                     <svg class="w-10 h-10" viewBox="0 0 16 9" xmlns="http://www.w3.org/2000/svg">
@@ -37,7 +37,7 @@
                 </a>
             </span>
             <button type="button"
-                class="bg-accent inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-2xl md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                class="bg-accent inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-xl md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                 aria-controls="navbar-default" aria-expanded="false"
                 x-on:click="showMenu = ! showMenu">
                 <span class="sr-only">Open main menu</span>
@@ -49,23 +49,31 @@
                 x-show="showMenu"
                 x-transition
                 x-cloak>
-                <ul class="font-medium flex flex-col p-4 md:p-0 rounded-2xl bg-secondary md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-primary">
+                <ul class="font-medium flex flex-col p-4 md:p-0 rounded-xl bg-secondary md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-primary">
                     {% if user.is_authenticated %}
                         <li>
-                            <a class="block py-2 pl-3 pr-4 text-gray-900  rounded-2xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'home_view' %}">Home</a>
+                            <a class="block py-2 pl-3 pr-4 text-gray-900  rounded-xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'home_view' %}">Home</a>
                         </li>
                         <li>
-                            <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-2xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'profile_view' %}">Profile</a>
+                            <a class="block py-2 pl-3 pr-4 text-gray-900  rounded-xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'store_view' %}">Store</a>
+                        </li>
+                        {% if user.is_superuser %}
+                            <li>
+                                <a class="block py-2 pl-3 pr-4 text-gray-900  rounded-xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'admin:index' %}">Admin</a>
+                            </li>    
+                        {% endif %}
+                        <li>
+                            <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'profile_view' %}">Profile</a>
                         </li>
                         <li>
-                            <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-2xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'signout_view' %}">Sign out</a>
+                            <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'signout_view' %}">Sign out</a>
                         </li>
                     {% else %}
                         <li>
-                            <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-2xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'signin_view' %}">Sign in</a>
+                            <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'signin_view' %}">Sign in</a>
                         </li>
                         <li>
-                            <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-2xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'signup_view' %}">Sign up</a>
+                            <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'signup_view' %}">Sign up</a>
                         </li>
                     {% endif %}
                 </ul>
