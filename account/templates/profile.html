@@ -55,9 +55,6 @@
         padding: 0.2em;
         height: 2em;
       }
-      .htmx-indicator{
-       color: red;
-    }
 </style>
 {% endblock additional_css %}
 
@@ -98,8 +95,8 @@
         </div>
         <button class="bg-accent w-full py-3 my-auto rounded-2xl hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer"
             x-on:click="showEdit = ! showEdit"
-            x-text="showEdit ? 'Cancel Editing' : 'Edit Profile'">
-            Edit Profile
+            x-text="showEdit ? 'Cancel Editing' : 'Edit'">
+            Edit
         </button>
     </div>
     <div class="bg-secondary w-[90vw] md:w-3/5 xl:w-2/5 mx-auto p-3 rounded-3xl mt-5"

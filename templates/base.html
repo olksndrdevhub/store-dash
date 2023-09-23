@@ -50,10 +50,10 @@
                 x-transition
                 x-cloak>
                 <ul class="font-medium flex flex-col p-4 md:p-0 rounded-2xl bg-secondary md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-primary">
-                    <li>
-                        <a class="block py-2 pl-3 pr-4 text-gray-900  rounded-2xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'home_view' %}">Home</a>
-                    </li>
                     {% if user.is_authenticated %}
+                        <li>
+                            <a class="block py-2 pl-3 pr-4 text-gray-900  rounded-2xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'home_view' %}">Home</a>
+                        </li>
                         <li>
                             <a class="block py-2 pl-3 pr-4 text-gray-900 rounded-2xl hover:bg-accent hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer" href="{% url 'profile_view' %}">Profile</a>
                         </li>
