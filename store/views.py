@@ -37,12 +37,13 @@ def products_view(request):
         new_product = Product.objects.create(
             name=name.strip(),
             price=int(price),
-            available_quantity=int(available_quantity),
         )
         if category and category.strip() != '':
             new_product.category = Category.objects.get(name=category)
         if color and color.strip() != '':
             new_product.color = Color.objects.get(name=color)
+        if available_quantity and available_quantity.strip() != '':
+            new_product.available_quantity = int(available_quantity)
         new_product.save()
         messages.add_message(
             request,

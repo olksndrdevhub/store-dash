@@ -1,10 +1,10 @@
 <h1  class="text-left text-3xl font-extrabold">Add New Product</h1>
 <form 
-    hx-post="{% url 'products_view' %}" 
-    hx-target="body"
+    hx-post="{% url 'products_view' %}"
     hx-push-url="true"
-    hx-select="body"
-    hx-swap="innerHTML"
+    hx-target="#wrapper"
+    hx-select="#wrapper"
+    hx-swap="outerHTML"
     class="flex flex-col space-y-5 py-10">
     <div class="flex gap-2">
         <div class="w-full">
@@ -66,7 +66,7 @@
         </button>
         <button type="submit" class="bg-action-success text-white px-5 py-2.5
             my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
-            transition transform duration-200 ease-in-out hover:cursor-pointer">
+            transition transform duration-200 ease-in-out hover:cursor-pointer"">
             Create
         </button>
     </div>
