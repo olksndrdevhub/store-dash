@@ -1,17 +1,33 @@
 <div class="bg-secondary w-full mx-auto p-3 rounded-xl h-fit" id="edit-product-form">
-    <h1 class="flex justify-between text-3xl font-extrabold">
-        {{ product.name }}
-        <span class="text-gray-500 font-medium">
-            {% if product.sku %}
-                SKU: {{ product.sku }}
-            {% endif %}
-        </span>
-    </h1>
+    <span class="flex justify-between">
+        <h1 class="text-3xl font-extrabold">
+            {{ product.name }}
+        </h1>
+        <button type="reset"
+            hx-get="{% url 'products_view' %}"
+            hx-push-url="true"
+            hx-target="#edit-product-form"
+            hx-swap="delete transition:true"
+            class="bg-transparent border border-gray-800 text-gray-600 hover:text-white hover:bg-gray-600 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+            <span class="sr-only">Close</span>
+        </button>
+    </span>
+    <div class="text-gray-500 font-medium">
+        {% if product.sku %}
+            SKU: {{ product.sku }}
+        {% endif %}
+    </div>
+    
     <form 
-        hx-post="{% url 'signup_view' %}" 
-        hx-target="form" 
-        hx-swap="outerHTML" 
-        hx-select="form" 
+        hx-post="{% url 'product_item_view' product.id %}" 
+        hx-target="#edit-product-form"
+        hx-select="#edit-product-form"
+        hx-trigger="submit"
+        hx-swap="outerHTML transition:true"
+        hx-select-oob="#product-row-{{ product.id }}"
         class="flex flex-col space-y-5 py-10">
         <div class="flex gap-2">
             <div class="w-full">
@@ -45,7 +61,7 @@
             </div>
             <div class="w-full">
                 <label for="price" class="block mb-2 text-sm font-medium text-gray-900 ">Enter product price, $</label>
-                <input required type="number" min="0" name="price" placeholder="Product price" id="price" value="{{ product.price }}"
+                <input required type="text" min="0" name="price" placeholder="Product price" id="price" value="{{ product.price }}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
                     {% if fname_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
                 {% if fname_error %}
@@ -69,14 +85,15 @@
             <span class="text-sm text-gray-400">Updated: {{ product.updated }}</span>
         </div>
         <div class="flex justify-between">
-            <button class="border border-accent px-5 py-2.5
+            <button class="border border-action-danger px-5 py-2.5
                 my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
+                hover:bg-action-danger hover:text-white
                 transition transform duration-200 ease-in-out hover:cursor-pointer"
                 hx-get="{% url 'products_view' %}"
                 hx-push-url="true"
                 hx-target="#edit-product-form"
                 hx-swap="delete">
-                Cancel
+                Delete
             </button>
             <button type="submit" class="bg-action-success text-white px-5 py-2.5
                 my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 

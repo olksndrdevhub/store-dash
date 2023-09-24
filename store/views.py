@@ -36,7 +36,7 @@ def products_view(request):
             return render(request, 'products.html', context)
         new_product = Product.objects.create(
             name=name.strip(),
-            price=int(price),
+            price=price,
         )
         if category and category.strip() != '':
             new_product.category = Category.objects.get(name=category)
@@ -62,8 +62,46 @@ def product_item_view(request, pk):
         'colors': Color.objects.all(),
     }
 
-    if request.htmx:
+    if request.htmx and request.method == 'GET':
         return render(request, 'partials/editProductForm.html', context)
+
+    if request.method == 'POST' and request.htmx:
+        product: Product = context['product']
+        data = request.POST
+        print(data)
+        name: str = data.get('name', None)
+        price: str = data.get('price', None)
+        category: str = data.get('category', None)
+        color: str = data.get('color', None)
+        available_quantity: str = data.get('available_quantity', None)
+        if name is None or name.strip() == '':
+            messages.add_message(
+                request,
+                messages.ERROR,
+                "Product name is required!"
+            )
+            return render(request, 'partials/editProductForm.html', context)
+        product.name = name.strip()
+        if price is None or price.strip() == '':
+            messages.add_message(
+                request,
+                messages.ERROR,
+                "Product price is required!"
+            )
+            return render(request, 'partials/editProductForm.html', context)
+        product.price = price.strip()
+        if category and category.strip() != '':
+            product.category = Category.objects.get(name=category)
+        if color and color.strip() != '':
+            product.color = Color.objects.get(name=color)
+        if available_quantity and available_quantity.strip() != '':
+            product.available_quantity = int(available_quantity)
+        product.save()
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            "Product updated successfully!"
+        )
 
     context['products'] = Product.objects.all()
     return render(request, 'products.html', context)

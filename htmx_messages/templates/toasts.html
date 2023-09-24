@@ -1,11 +1,11 @@
-<div data-toast-container id="toasts-container" class="fixed z-50 top-[10vh] w-[90vw] md:w[40vw] right-[5vw]">
+<div data-toast-container id="toasts-container" class="fixed z-50 top-[10vh] w-[90vw] md:w-auto right-[5vw]">
   <div data-toast-template class="toast z-50 items-center w-full p-3 mb-3 hidden
       bg-secondary rounded-lg shadow border-2" 
       role="alert">
       <div data-icon-container class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8">
           <span class="sr-only">Check icon</span>
       </div>
-      <div class="ml-3 text-sm font-normal" data-toast-body></div>
+      <div class="mx-3 text-sm font-normal" data-toast-body></div>
       <button type="button" 
         @click="removeToast($event.target)"
         class="ml-auto -mx-1.5 -my-1.5 bg-accent hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-secondary inline-flex items-center justify-center h-8 w-8" aria-label="Close">
@@ -15,7 +15,7 @@
         </svg>
       </button>
     </div>
-  {% for message in messages %}
+  <!-- {% for message in messages %}
     <div id="toast-{{message.tags}}" class="toast z-50 flex items-center w-full p-3 mb-3
       bg-secondary rounded-lg shadow border-action-success border-2
       {% if 'warning' in message.tags %}border-yellow-500{% endif %}
@@ -52,5 +52,5 @@
         </svg>
       </button>
     </div>
-{% endfor %}
+{% endfor %} -->
 </div>
