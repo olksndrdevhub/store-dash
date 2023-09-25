@@ -64,45 +64,52 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for product in products %}
-                        <tr class="bg-white border-b hover:bg-gray-100 text-gray-900"
-                            id="product-row-{{product.id}}"
-                            x-data="{selectedRow : false}"
-                            x-bind:class="selectedRow ? 'bg-gray-100 selected-row' : 'bg-white'"
+                    {% for product_item in products %}
+                        <tr class="border-b hover:bg-gray-100 text-gray-900"
+                            id="product-row-{{product_item.id}}"
+                            {% if product.id == product_item.id %}
+                                x-data="{selectedRow : true}"
+                            {% else %}
+                                x-data="{selectedRow : false}"
+                            {% endif %}
+                            x-bind:class="selectedRow ? 'bg-green-50 selected-row' : 'bg-white'"
                             table-row>
                             <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                {{ product.name }}
+                                {{ product_item.name }}
                             </th>
                             <td class="px-6 py-4">
-                                {% if product.sku %}
-                                    {{ product.sku }}
+                                {% if product_item.sku %}
+                                    {{ product_item.sku }}
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4">
-                                {{ product.available_quantity }}
+                                {{ product_item.available_quantity }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ product.color }}
+                                {{ product_item.color }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ product.category }}
+                                {{ product_item.category }}
                             </td>
                             <td class="px-6 py-4">
-                                ${{ product.price }}
+                                ${{ product_item.price }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ product.created }}
+                                {{ product_item.created }}
                             </td>
                             <td class="px-6 py-4">
                                 <button
-                                    hx-get="{% url 'product_item_view' product.id %}"
+                                    hx-get="{% url 'product_item_view' product_item.id %}"
                                     hx-target="#form-spawn"
                                     hx-push-url="true"
-                                    hx-swap="innerHTML transition:true show:#form-spawn:top"
+                                    hx-swap="innerHTML transition:true"
                                     hx-select="#edit-product-form"
-                                    x-on:click="selectedRow = ! selectedRow; $nextTick( () => { deselectOtherRows($el) })"
+                                    hx-select-oob="#product-row-{{ product_item.id }}"
+                                    x-on:click="selectedRow = ! selectedRow; showCreateForm = false; $nextTick( () => { deselectOtherRows($el) })"
                                     x-bind:class="selectedRow ? 'bg-action-success text-white' : 'bg-active-dimmed'"
-                                    class="text-gray-900 rounded-lg text-sm px-4 py-1 hover:bg-action-success hover:text-white hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointe focus:ring-4 focus:outline-none focus:ring-action-success font-medium">
+                                    class="text-gray-900 rounded-lg text-sm px-4 py-1 hover:bg-action-success hover:text-white 
+                                        hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out 
+                                        hover:cursor-pointe focus:ring-4 focus:outline-none focus:ring-action-success font-medium">
                                     <svg width="24" height="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                                         <path fill="currentColor" d="M30.94 15.66A16.69 16.69 0 0 0 16 5A16.69 16.69 0 0 0 1.06 15.66a1 1 0 0 0 0 .68A16.69 16.69 0 0 0 16 27a16.69 16.69 0 0 0 14.94-10.66a1 1 0 0 0 0-.68ZM16 25c-5.3 0-10.9-3.93-12.93-9C5.1 10.93 10.7 7 16 7s10.9 3.93 12.93 9C26.9 21.07 21.3 25 16 25Z"/>
                                         <path fill="currentColor" d="M16 10a6 6 0 1 0 6 6a6 6 0 0 0-6-6Zm0 10a4 4 0 1 1 4-4a4 4 0 0 1-4 4Z"/>

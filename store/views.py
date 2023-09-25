@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from django.urls import reverse
 from django.contrib import messages
+from django.http import HttpResponse
 
 from .models import Product, Category, Color
 from account.models import User
@@ -62,8 +64,21 @@ def product_item_view(request, pk):
         'colors': Color.objects.all(),
     }
 
+    if request.htmx and request.method == 'DELETE':
+        product: Product = context['product']
+        product.delete()
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            "Product deleted successfully!"
+        )
+        response = HttpResponse()
+        response['HX-Location'] = reverse('products_view')
+        response.status_code = 204
+        return response
+
     if request.htmx and request.method == 'GET':
-        return render(request, 'partials/editProductForm.html', context)
+        return render(request, 'products.html', context)
 
     if request.method == 'POST' and request.htmx:
         product: Product = context['product']
