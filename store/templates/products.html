@@ -4,13 +4,49 @@
 {% block title %}Products |{% endblock title %}
 
 {% block additional_head_links %}{% endblock additional_head_links %}
-{% block additional_css %}{% endblock additional_css %}
+{% block additional_css %}
+<style>
+    .grid-area-forms {
+        grid-area: forms;
+    }
+    .grid-area-table {
+        grid-area: table;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-areas: 
+          'forms'
+          'table';
+      }
+    @media (min-width: 1280px) {
+        .grid-container {
+            grid-template-columns: 2fr 1fr;
+            grid-template-areas: 
+                'table forms';
+        }
+    }
+</style>
+{% endblock additional_css %}
 
 {% block content %}
-<div class="wrapper grid grid-cols-1 xl:grid-cols-3 gap-5"
+<div class="wrapper grid-container gap-5"
     id="wrapper"
     x-data="{showCreateForm: false}">
-    <div class="bg-secondary w-full xl:col-span-2 mx-auto p-3 rounded-xl h-fit">
+    <div class="flex flex-col gap-5 grid-area-forms">
+        <div id="create-form-spawn" class="bg-secondary w-full mx-auto p-3 rounded-xl h-fit"
+            x-show="showCreateForm"
+            x-transition
+            x-cloak>
+            {% include 'partials/createProductForm.html' %}
+        </div>
+        <div id="form-spawn">
+            {% if product %}
+                {% include 'partials/editProductForm.html' %}
+            {% endif %}
+        </div>
+        
+    </div>
+    <div class="bg-secondary w-full grid-area-table mx-auto p-3 rounded-xl h-fit">
         <span class="head mb-5 flex justify-between">
             <h1 class="text-left text-3xl font-extrabold">Products</h1>
             <form>   
@@ -86,10 +122,14 @@
                                 {{ product_item.available_quantity }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ product_item.color }}
+                                {% if product_item.color %}
+                                    {{ product_item.color }}
+                                {% endif %}
                             </td>
                             <td class="px-6 py-4">
-                                {{ product_item.category }}
+                                {% if product_item.category %}
+                                    {{ product_item.category }}
+                                {% endif %}
                             </td>
                             <td class="px-6 py-4">
                                 ${{ product_item.price }}
@@ -121,20 +161,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="flex flex-col gap-5">
-        <div id="create-form-spawn" class="bg-secondary w-full mx-auto p-3 rounded-xl h-fit"
-            x-show="showCreateForm"
-            x-transition
-            x-cloak>
-            {% include 'partials/createProductForm.html' %}
-        </div>
-        <div id="form-spawn">
-            {% if product %}
-                {% include 'partials/editProductForm.html' %}
-            {% endif %}
-        </div>
-        
     </div>
 </div>
 

@@ -1430,6 +1430,18 @@ video {
     grid-column: span 2 / span 2;
   }
 
+  .xl\:col-start-1 {
+    grid-column-start: 1;
+  }
+
+  .xl\:col-start-2 {
+    grid-column-start: 2;
+  }
+
+  .xl\:col-start-3 {
+    grid-column-start: 3;
+  }
+
   .xl\:w-11\/12 {
     width: 91.666667%;
   }
@@ -1448,5 +1460,9 @@ video {
 
   .xl\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .xl\:grid-rows-1 {
+    grid-template-rows: repeat(1, minmax(0, 1fr));
   }
 }

@@ -23,14 +23,7 @@
         {% endif %}
     </div>
     
-    <form 
-        hx-post="{% url 'product_item_view' product.id %}" 
-        hx-target="#edit-product-form"
-        hx-select="#edit-product-form"
-        hx-trigger="submit"
-        hx-swap="outerHTML transition:true"
-        hx-select-oob="#product-row-{{ product.id }}"
-        class="flex flex-col space-y-5 py-10">
+    <form class="flex flex-col space-y-5 py-10">
         <div class="flex gap-2">
             <div class="w-full">
                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 ">Enter product name</label>
@@ -97,9 +90,14 @@
                     >
                     Delete
                 </button>
-                <button type="submit" class="bg-action-success text-white px-5 py-2.5
+                <button type="button" class="bg-action-success text-white px-5 py-2.5
                     my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
-                    transition transform duration-200 ease-in-out hover:cursor-pointer">
+                    transition transform duration-200 ease-in-out hover:cursor-pointer"
+                    hx-post="{% url 'product_item_view' product.id %}" 
+                    hx-target="#edit-product-form"
+                    hx-select="#edit-product-form"
+                    hx-swap="outerHTML transition:true"
+                    hx-select-oob="#product-row-{{ product.id }}">
                     Save
                 </button>
             </div>
@@ -115,7 +113,12 @@
                     <button class="bg-action-danger px-5 py-2.5 rounded-lg text-white hover:bg-red-800
                         hover:translate-y-[-3px] transitiopn transform duration-200 ease-in-out hover:cursor-pointer"
                         type="button"
-                        hx-delete="{% url 'product_item_view' product.id %}" 
+                        hx-delete="{% url 'product_item_view' product.id %}"
+                        hx-replace-url="{% url 'products_view' %}"
+                        hx-target="#products-table"
+                        hx-select="#products-table"
+                        hx-swap="outerHTML transition:true"
+                        hx-select-oob="#edit-product-form delete"
                         >
                         Delete
                     </button>

@@ -72,9 +72,8 @@ def product_item_view(request, pk):
             messages.SUCCESS,
             "Product deleted successfully!"
         )
-        response = HttpResponse()
-        response['HX-Location'] = reverse('products_view')
-        response.status_code = 204
+        context = {'products': Product.objects.all()}
+        response = render(request, 'products.html', context)
         return response
 
     if request.htmx and request.method == 'GET':
