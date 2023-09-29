@@ -14,11 +14,11 @@
         position: relative;
         transition: all 0.3s ease;
         width: fit-content;
-      }
-      .profile-pic input {
+    }
+    .profile-pic input {
         display: none;
-      }
-      .profile-pic img {
+    }
+    .profile-pic img {
         position: absolute;
         object-fit: cover;
         width: 165px;
@@ -27,13 +27,13 @@
         border-radius: 100px;
         border-color: transparent;
         z-index: 0;
-      }
-      .profile-pic .-label {
+    }
+    .profile-pic .-label {
         cursor: pointer;
         height: 165px;
         width: 165px;
-      }
-      .profile-pic:hover .-label {
+    }
+    .profile-pic:hover .-label {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -43,13 +43,13 @@
         transition: background-color 0.2s ease-in-out;
         border-radius: 100px;
         margin-bottom: 0;
-      }
-        .profile-pic:hover .-label span {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-        }
-      .profile-pic span {
+    }
+    .profile-pic:hover .-label span {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .profile-pic span {
         display: none;
         padding: 0.2em;
         height: 2em;
@@ -74,14 +74,14 @@
                     </span>
                     <span>Change Image</span>
                 </label>
-                <img id="spinner" class="htmx-indicator" style="color:green; width: 100%; height: 100%; z-index:5000;" src="{% static 'img/spinner.svg' %}"/>
+                <img id="indicator" class="htmx-indicator" style="color:green; width: 100%; height: 100%; z-index:5000;" src="{% static 'img/spinner.svg' %}"/>
                 <form enctype="multipart/form-data"
                     hx-post="{% url 'hx_update_userpic' %}"
                     hx-trigger="change"
                     hx-target="#profile-pic"
                     hx-select="#profile-pic"
                     hx-swap="outerHTML"
-                    hx-indicator="#spinner">
+                    hx-indicator="#indicator">
                     <input id="file" type="file" name="userpic" accept="image/*"/>
                 </form>
                 <img src="{% if user.userpic %}{{ user.userpic.url }}{% endif %}" id="output" width="200" alt="UserPic" />

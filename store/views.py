@@ -1,10 +1,36 @@
+from time import sleep
 from django.shortcuts import render
-from django.urls import reverse
 from django.contrib import messages
-from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Product, Category, Color
 from account.models import User
+
+
+def get_paginated_query(query, request, item=None):
+    '''
+    helper function to generate paginated query
+    '''
+    paginator = Paginator(query, 5)
+    if item:
+        # Calculate the page number by finding the index of the item in the list and dividing by the page size
+        item_index = list(query).index(item)
+        page_number = (item_index // 5) + 1
+    else:
+        page_number = request.GET.get('page', 1)
+    try:
+        query = paginator.page(page_number)
+    except EmptyPage:
+        query = paginator.page(paginator.num_pages)
+    except PageNotAnInteger:
+        query = paginator.page(1)
+
+    page_range = paginator.get_elided_page_range(
+        number=query.number,
+        on_each_side=3,
+        on_ends=1
+    )
+    return query, page_range
 
 
 # Create your views here.
@@ -17,10 +43,14 @@ def store_view(request):
 
 def products_view(request):
     context: dict = {
-        'products': Product.objects.all(),
         'categories': Category.objects.all(),
         'colors': Color.objects.all(),
     }
+    context['products'], context['page_range'] = get_paginated_query(
+        Product.objects.all(),
+        request
+    )
+
 
     if request.method == 'POST' and request.htmx:
         category: str = request.POST.get('category', None)
@@ -52,17 +82,20 @@ def products_view(request):
             messages.SUCCESS,
             "Product created successfully!"
         )
-        context['products'] = Product.objects.all()
+        context['products'], context['page_range'] = get_paginated_query(
+            Product.objects.all(),
+            request
+        )
 
     return render(request, 'products.html', context)
 
 
 def product_item_view(request, pk):
     context: dict = {
-        'product': Product.objects.get(pk=pk),
         'categories': Category.objects.all(),
         'colors': Color.objects.all(),
     }
+    context['product'] = Product.objects.get(pk=pk)
 
     if request.htmx and request.method == 'DELETE':
         product: Product = context['product']
@@ -72,12 +105,12 @@ def product_item_view(request, pk):
             messages.SUCCESS,
             "Product deleted successfully!"
         )
-        context = {'products': Product.objects.all()}
+        context['products'], context['page_range'] = get_paginated_query(Product.objects.all(), request)
         response = render(request, 'products.html', context)
         return response
 
     if request.htmx and request.method == 'GET':
-        return render(request, 'products.html', context)
+        return render(request, 'partials/editProductForm.html', context)
 
     if request.method == 'POST' and request.htmx:
         product: Product = context['product']
@@ -117,7 +150,10 @@ def product_item_view(request, pk):
             "Product updated successfully!"
         )
 
-    context['products'] = Product.objects.all()
+    context['products'], context['page_range'] = get_paginated_query(Product.objects.all(), request, context['product'])
+    print(context['products'])
+    print(context['page_range'])
+    print(context['product'])
     return render(request, 'products.html', context)
 
 
