@@ -109,9 +109,6 @@ def product_item_view(request, pk):
         response = render(request, 'products.html', context)
         return response
 
-    if request.htmx and request.method == 'GET':
-        return render(request, 'partials/editProductForm.html', context)
-
     if request.method == 'POST' and request.htmx:
         product: Product = context['product']
         data = request.POST
@@ -121,6 +118,7 @@ def product_item_view(request, pk):
         category: str = data.get('category', None)
         color: str = data.get('color', None)
         available_quantity: str = data.get('available_quantity', None)
+        sku: str = data.get('sku', None)
         if name is None or name.strip() == '':
             messages.add_message(
                 request,
@@ -143,18 +141,27 @@ def product_item_view(request, pk):
             product.color = Color.objects.get(name=color)
         if available_quantity and available_quantity.strip() != '':
             product.available_quantity = int(available_quantity)
+        if sku and sku.strip() != '':
+            product.sku = sku.strip()
         product.save()
         messages.add_message(
             request,
             messages.SUCCESS,
             "Product updated successfully!"
         )
+        messages.add_message(
+            request,
+            messages.WARNING,
+            "Product updated successfully!"
+        )
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "Product updated successfully!"
+        )
+        return render(request, 'partials/editProductForm.html', context)
 
-    context['products'], context['page_range'] = get_paginated_query(Product.objects.all(), request, context['product'])
-    print(context['products'])
-    print(context['page_range'])
-    print(context['product'])
-    return render(request, 'products.html', context)
+    return render(request, 'product_page.html', context)
 
 
 def clients_view(request):

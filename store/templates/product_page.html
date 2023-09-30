@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Product |{% endblock title %}
+
+{% block additional_head_links %}{% endblock additional_head_links %}
+{% block additional_css %}
+{% endblock additional_css %}
+
+{% block content %}
+    {% if product %}
+        {% include 'partials/editProductForm.html' %}
+    {% endif %}
+{% endblock content %}
+
+{% block additional_javascript %}
+{% endblock additional_javascript %}

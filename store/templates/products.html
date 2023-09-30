@@ -4,49 +4,19 @@
 {% block title %}Products |{% endblock title %}
 
 {% block additional_head_links %}{% endblock additional_head_links %}
-{% block additional_css %}
-<style>
-    .grid-area-forms {
-        grid-area: forms;
-    }
-    .grid-area-table {
-        grid-area: table;
-    }
-    .grid-container {
-        display: grid;
-        grid-template-areas: 
-          'forms'
-          'table';
-      }
-    @media (min-width: 1280px) {
-        .grid-container {
-            grid-template-columns: 2fr 1fr;
-            grid-template-areas: 
-                'table forms';
-        }
-    }
-</style>
-{% endblock additional_css %}
+{% block additional_css %}{% endblock additional_css %}
 
 {% block content %}
-<div class="wrapper grid-container gap-5"
+<div class="wrapper flex flex-col w-full xl:w-10/12 mx-auto"
     id="wrapper"
     x-data="{showCreateForm: false}">
-    <div class="flex flex-col gap-5 grid-area-forms">
-        <div id="create-form-spawn" class="bg-secondary w-full mx-auto p-3 rounded-xl h-fit"
-            x-show="showCreateForm"
-            x-transition
-            x-cloak>
-            {% include 'partials/createProductForm.html' %}
-        </div>
-        <div id="form-spawn">
-            {% if product %}
-                {% include 'partials/editProductForm.html' %}
-            {% endif %}
-        </div>
-        
+    <div id="create-form-spawn" class="bg-secondary p-3 rounded-xl h-fit mb-5"
+        x-show="showCreateForm"
+        x-transition
+        x-cloak>
+        {% include 'partials/createProductForm.html' %}
     </div>
-    <div class="bg-secondary w-full grid-area-table mx-auto p-3 rounded-xl h-fit" id="products-container">
+    <div class="bg-secondary p-3 rounded-xl h-fit" id="products-container">
         <span class="head mb-5 flex justify-between">
             <h1 class="text-left text-3xl font-extrabold">Products</h1>
             <span class="flex space-x-5 items-center">
@@ -58,10 +28,10 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                             </svg>
                         </div>
-                        <input type="search" id="default-search" class="block w-72 max-w-md p-2.5 pl-10 mx-auto text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Search Products..." required>
+                        <input type="search" id="default-search" class="block w-72 max-w-md p-2.5 pl-10 mx-auto text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50" placeholder="Search Products..." required>
                     </div>
                 </form>
-                <span id="indicator" class="bg-green-200 p-2 rounded-lg htmx-indicator">
+                <span id="indicator" class="bg-green-200 p-2 rounded-xl htmx-indicator">
                     <img class="w-[25px] h-[25px]" src="{% static 'img/spinner.svg' %}"/>
                 </span>
             </span>
@@ -107,15 +77,8 @@
                 </thead>
                 <tbody>
                     {% for product_item in products %}
-                        <tr class="border-b hover:bg-gray-100 text-gray-900"
-                            id="product-row-{{product_item.id}}"
-                            {% if product.id == product_item.id %}
-                                x-data="{selectedRow : true}"
-                            {% else %}
-                                x-data="{selectedRow : false}"
-                            {% endif %}
-                            x-bind:class="selectedRow ? 'bg-green-50 selected-row' : 'bg-white'"
-                            table-row>
+                        <tr class="border-b hover:bg-green-50 text-gray-900"
+                            id="product-row-{{product_item.id}}">
                             <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
                                 {{ product_item.name }}
                             </th>
@@ -146,12 +109,10 @@
                             <td class="px-6 py-4">
                                 <button
                                     hx-get="{% url 'product_item_view' product_item.id %}"
-                                    hx-target="#form-spawn"
                                     hx-push-url="true"
+                                    hx-target="body"
                                     hx-swap="innerHTML transition:true"
-                                    x-on:click="selectedRow = ! selectedRow; showCreateForm = false; $nextTick( () => { deselectOtherRows($el) })"
-                                    x-bind:class="selectedRow ? 'bg-action-success text-white' : 'bg-active-dimmed'"
-                                    class="text-gray-900 rounded-lg text-sm px-4 py-1 hover:bg-action-success hover:text-white 
+                                    class="text-gray-900 rounded-xl text-sm px-4 py-1 bg-gray-100 hover:bg-action-success hover:text-white 
                                         hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out 
                                         hover:cursor-pointe focus:ring-4 focus:outline-none focus:ring-action-success font-medium">
                                     <svg width="24" height="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -168,9 +129,9 @@
         <div id="pagination">
             {% if products.has_other_pages %}
                 <nav aria-label="products navigation" class="flex">
-                    <ul class="flex flex-wrap justify-center space-x-2 mx-auto p-1 mt-2 w-fit rounded-lg bg-gray-50">
+                    <ul class="flex flex-wrap justify-center space-x-2 mx-auto p-1 mt-2 w-fit rounded-xl bg-gray-50">
                         {% if products.has_previous %}
-                            <li class="w-auto flex justify-center py-2 px-4 rounded-lg hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
+                            <li class="w-auto flex justify-center py-2 px-4 rounded-xl hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
                                 {% if search %}
                                     hx-get="{% url 'products_view' %}?search={{ search }}&page={{ products.previous_page_number }}"
                                 {% else %}
@@ -187,7 +148,7 @@
                                 </svg>                              
                             </li>
                         {% else %}
-                            <li class="w-auto flex justify-center py-2 px-4 rounded-lg text-gray-400 hover:cursor-default">
+                            <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-400 hover:cursor-default">
                                 <span class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -197,16 +158,16 @@
                         {% endif %}
                         {% for i in page_range|default_if_none:products.paginator.get_elided_page_range %}
                             {% if i == products.paginator.ELLIPSIS %}
-                                <li class="w-auto flex justify-center py-2 px-4 rounded-lg text-gray-400 hover:cursor-default" aria-current="page">
+                                <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-400 hover:cursor-default" aria-current="page">
                                     <span class="">{{ i }}</span>
                                 </li>
                             {% else %}
                                 {% if products.number == i %}
-                                    <li class="w-auto flex justify-center py-2 px-4 rounded-lg text-gray-900 bg-green-200 hover:cursor-default" aria-current="page">
+                                    <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-900 bg-green-200 hover:cursor-default" aria-current="page">
                                         <span class="">{{ i }}</span>
                                     </li>
                                 {% else %}
-                                    <li class="w-auto flex justify-center py-2 px-4 rounded-lg bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
+                                    <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
                                         {% if search %}
                                             hx-get="{% url 'products_view' %}?search={{ search }}&page={{ i }}"
                                         {% else %}
@@ -224,7 +185,7 @@
                             {% endif %}
                         {% endfor %}
                         {% if products.has_next %}
-                            <li class="w-auto flex justify-center py-2 px-4 rounded-lg bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
+                            <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
                                 {% if search %}
                                     hx-get="{% url 'products_view' %}?search={{ search }}&page={{ products.next_page_number }}"
                                 {% else %}
@@ -241,7 +202,7 @@
                                 </svg>  
                             </li>
                         {% else %}
-                            <li class="w-auto flex justify-center sm:ml-3 py-2 px-4 rounded-lg text-[--text-minor] hover:cursor-default">
+                            <li class="w-auto flex justify-center sm:ml-3 py-2 px-4 rounded-xl text-[--text-minor] hover:cursor-default">
                                 <span class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -258,23 +219,4 @@
 {% endblock content %}
 
 {% block additional_javascript %}
-
-<script>
-    function deselectOtherRows(element=null) {
-        if (element==null){
-            let selectedRows = document.querySelectorAll('.selected-row');
-            selectedRows.forEach(row => {
-                row._x_dataStack[0].selectedRow = false;
-            });
-            return;
-        }
-        let currentRow = element.closest('.selected-row');
-        let selectedRows = document.querySelectorAll('.selected-row');
-        selectedRows.forEach(row => {
-            if (row != currentRow) {
-                row._x_dataStack[0].selectedRow = false;
-            }
-        });
-    }
-</script>
 {% endblock additional_javascript %}
