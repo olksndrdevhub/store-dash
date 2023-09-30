@@ -14,6 +14,7 @@ module.exports = {
           accent: 'rgb(var(--color-accent) / <alpha-value>)',
           'accent-secondary': 'rgb(var(--color-accent-secondary) / <alpha-value>)',
           'action-success': 'rgb(var(--color-action-success) / <alpha-value>)',
+          'action-warning': 'rgb(var(--color-action-warning) / <alpha-value>)',
           'action-danger': 'rgb(var(--color-action-danger) / <alpha-value>)',
           'text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
           'text-dimmed': 'rgb(var(--color-text-dimmed) / <alpha-value>)',

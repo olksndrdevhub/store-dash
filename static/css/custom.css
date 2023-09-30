@@ -48,3 +48,29 @@ input.valid {
     box-shadow: 0 0 3px #36cc00;
 }
 [x-cloak] { display: none !important; }
+
+/* colors permanent for messages */
+.border-action-success {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--color-action-success) / var(--tw-border-opacity));
+}
+.border-action-warning {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--color-action-warning) / var(--tw-border-opacity));
+}
+.border-action-danger {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--color-action-danger) / var(--tw-border-opacity));
+}
+.text-action-success {
+    --tw-text-opacity: 1;
+    color: rgb(var(--color-action-success) / var(--tw-text-opacity));
+}
+.text-action-warning {
+    --tw-text-opacity: 1;
+    color: rgb(var(--color-action-warning) / var(--tw-text-opacity));
+}
+.text-action-danger {
+    --tw-text-opacity: 1;
+    color: rgb(var(--color-action-danger) / var(--tw-text-opacity));
+}
