@@ -17,9 +17,19 @@
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     {% block additional_head_links %}{% endblock additional_head_links %}
+    <style>
+        .fadeout {
+            animation: 0.3s fadeout;
+        }
+        @keyframes fadeout {
+            from {opacity: 1;}
+            to {opacity: 0;}
+        }
+    </style>
     {% block additional_css %}{% endblock additional_css %}
 </head>
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="bg-primary">
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="bg-primary"
+    hx-on:messages="console.log('messages event in htmx', event.detail.value); event.detail.value.forEach((message) => {createToast(message)}); removeAllToasts();">
 
     <nav class=" bg-primary border-gray-200"
         x-data="{ showMenu: false }"
