@@ -1,5 +1,5 @@
 from time import sleep
-from django.shortcuts import render
+from django.shortcuts import render, resolve_url
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -172,7 +172,11 @@ def product_item_view(request, pk):
         )
         return render(request, 'partials/editProductForm.html', context)
 
-    return render(request, 'product_page.html', context)
+    response = render(request, 'product_page.html', context)
+
+    if not request.htmx and request.method=='GET':
+        response.delete_cookie('prevUrl')
+    return response
 
 
 def clients_view(request):

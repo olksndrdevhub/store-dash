@@ -690,6 +690,10 @@ video {
   margin-top: 1.25rem;
 }
 
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .block {
   display: block;
 }
@@ -1319,6 +1323,11 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.text-active-dimmed {
+  --tw-text-opacity: 1;
+  color: rgb(var(--color-active-dimmed) / var(--tw-text-opacity));
+}
+
 .placeholder-gray-600::-moz-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(75 85 99 / var(--tw-placeholder-opacity));
@@ -1567,6 +1576,11 @@ input.valid {
 .hover\:bg-secondary:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(var(--color-secondary) / var(--tw-bg-opacity));
+}
+
+.hover\:bg-active-dimmed:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(var(--color-active-dimmed) / var(--tw-bg-opacity));
 }
 
 .hover\:text-gray-900:hover {

@@ -1,10 +1,34 @@
-<div class="wrapper w-full grid xl:grid-cols-2 gap-5 mx-auto">
+<div class="wrapper w-full grid xl:grid-cols-2 gap-5 mx-auto"
+    x-init="$nextTick(() => {
+        var btn = document.getElementById('returnBtn');
+        var prevUrl = getCookie('prevUrl');
+        if (prevUrl !== undefined) {
+            btn.setAttribute('hx-get', prevUrl);
+        }
+    })">
     <div class="bg-secondary p-3 rounded-xl h-fit"
         id="edit-product-form">
         <span class="flex justify-between">
             <h1 class="text-3xl font-extrabold">
                 {{ product.name }}
             </h1>
+            <button class="flex border-2 border-active-dimmed px-5 py-2.5
+                my-auto rounded-lg hover:translate-y-[-3px] hover:bg-active-dimmed transitiopn transform duration-200 ease-in-out hover:cursor-pointer"
+                type="button"
+                id="returnBtn"
+                hx-get="{% url 'products_view' %}"
+                hx-target="body"
+                hx-push-url="true"
+                hx-swap="outerHTML transition:true">
+                <svg class="mr-2" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <g id="evaArrowBackOutline0">
+                        <g id="evaArrowBackOutline1">
+                            <path id="evaArrowBackOutline2" fill="currentColor" d="M19 11H7.14l3.63-4.36a1 1 0 1 0-1.54-1.28l-5 6a1.19 1.19 0 0 0-.09.15c0 .05 0 .08-.07.13A1 1 0 0 0 4 12a1 1 0 0 0 .07.36c0 .05 0 .08.07.13a1.19 1.19 0 0 0 .09.15l5 6A1 1 0 0 0 10 19a1 1 0 0 0 .64-.23a1 1 0 0 0 .13-1.41L7.14 13H19a1 1 0 0 0 0-2Z"/>
+                        </g>
+                    </g>
+                </svg>
+                Return
+            </button>
         </span>
         <div class="text-gray-500 font-medium">
             {% if product.sku %}

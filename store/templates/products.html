@@ -9,8 +9,7 @@
 {% block content %}
 <div class="wrapper flex flex-col w-full xl:w-10/12 mx-auto"
     id="wrapper"
-    x-data="{showCreateForm: false}"
-    x-init="$nextTick(()=>{console.log(showCreateForm)})">
+    x-data="{showCreateForm: false}">
     <div id="create-form-spawn" class="bg-secondary p-3 rounded-xl h-fit mb-5"
         x-show="showCreateForm"
         x-transition
@@ -124,6 +123,7 @@
                                     hx-push-url="true"
                                     hx-target="body"
                                     hx-swap="innerHTML transition:true"
+                                    hx-on:htmx:before-request="document.cookie = `prevUrl=${window.location.href}`"
                                     class="text-gray-900 rounded-xl text-sm px-4 py-1 bg-gray-100 hover:bg-action-success hover:text-white 
                                         hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out 
                                         hover:cursor-pointe focus:ring-4 focus:outline-none focus:ring-action-success font-medium">

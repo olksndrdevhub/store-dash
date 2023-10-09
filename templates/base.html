@@ -115,6 +115,14 @@
     <script src="{% static 'js/htmx.min.js' %}"></script>
     <script>
         htmx.config.useTemplateFragments = true;
+
+        function getCookie(name) {
+
+            var matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ))
+            return matches ? decodeURIComponent(matches[1]) : undefined
+        }
     </script>
     <script src="{% static 'toasts.js' %}"></script>
     {% block additional_javascript %}{% endblock additional_javascript %}
