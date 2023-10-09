@@ -147,3 +147,16 @@
     height: 2em;
 }
 /* Profile page end css */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th:last-child,
+td:last-child {
+  position: sticky;
+  right: 0;
+  --tw-text-opacity: 1;
+  background-color: white;
+}

@@ -48,6 +48,7 @@ def products_view(request):
     context: dict = {
         'categories': Category.objects.all(),
         'colors': Color.objects.all(),
+        'order_by': '-created',
     }
     products = Product.objects.all()
 
