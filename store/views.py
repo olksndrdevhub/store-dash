@@ -37,6 +37,9 @@ def get_paginated_query(query, request, item=None):
 def store_view(request):
     context = {}
     user: User = request.user
+    context['products'] = Product.objects.all().order_by('-created')[:5]
+    context['products_count'] = Product.objects.all().count()
+    context['out_of_stock_count'] = Product.objects.filter(available_quantity=0).count()
 
     return render(request, 'store.html', context)
 
@@ -51,6 +54,10 @@ def products_view(request):
     if 'search' in request.GET and request.GET.get('search').strip() != '':
         context['search'] = request.GET.get('search')
         products = products.filter(name__icontains=request.GET.get('search'))
+
+    if 'order_by' in request.GET and request.GET.get('order_by').strip() != '':
+        context['order_by'] = request.GET.get('order_by')
+        products = products.order_by(request.GET.get('order_by'))
 
     context['products'], context['page_range'] = get_paginated_query(
         products,

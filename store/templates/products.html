@@ -60,8 +60,34 @@
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="products-table">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                     <tr>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="flex items-center justify-between px-6 py-3 hover:bg-gray-300 hover:cursor-pointer {% if order_by %}bg-gray-200{% endif %}"
+                            {% if order_by == '-name' %}
+                                hx-get="{% url 'products_view'%}?order_by=name"
+                            {% else %}
+                                hx-get="{% url 'products_view'%}?order_by=-name"
+                            {% endif %}
+                            hx-push-url="true"
+                            hx-target="#products-table"
+                            hx-select="#products-table"
+                            hx-swap="outerHTML transition:true"
+                            hx-select-oob="table-bottom"
+                            >
                             Product name
+                            {% if order_by == '-name' %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <g fill="none">
+                                        <path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/>
+                                        <path fill="#000000" d="M8 12c.674 0 1.28.396 1.556 1.002l.054.132l2.332 6.53a1 1 0 0 1-1.838.78l-.046-.108L9.581 19H6.419l-.477 1.336a1 1 0 0 1-1.917-.56l.033-.112l2.332-6.53A1.71 1.71 0 0 1 8 12Zm9-8a1 1 0 0 1 1 1v12.414l1.121-1.121a1 1 0 0 1 1.415 1.414l-2.829 2.828a1 1 0 0 1-1.414 0l-2.829-2.828a1 1 0 0 1 1.415-1.414L16 17.414V5a1 1 0 0 1 1-1ZM8 14.573L7.133 17h1.734L8 14.573ZM10.759 3c.94 0 1.43 1.092.855 1.792l-.078.086L7.414 9H11a1 1 0 0 1 .117 1.993L11 11H5.241c-.94 0-1.43-1.092-.855-1.792l.078-.086L8.586 5H5a1 1 0 0 1-.117-1.993L5 3h5.759Z"/>
+                                    </g>
+                                </svg>
+                            {% elif order_by == 'name' %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <g fill="none" fill-rule="evenodd">
+                                        <path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/>
+                                        <path fill="currentColor" d="M10.759 13c.94 0 1.43 1.092.855 1.792l-.078.086L7.414 19H11a1 1 0 0 1 .117 1.993L11 21H5.241c-.94 0-1.43-1.092-.855-1.792l.078-.086L8.586 15H5a1 1 0 0 1-.117-1.993L5 13h5.759ZM17 4a1 1 0 0 1 1 1v12.414l1.121-1.121a1 1 0 0 1 1.415 1.414l-2.829 2.828a1 1 0 0 1-1.414 0l-2.829-2.828a1 1 0 0 1 1.415-1.414L16 17.414V5a1 1 0 0 1 1-1ZM8 3c.674 0 1.28.396 1.556 1.002l.054.133l2.332 6.529a1 1 0 0 1-1.838.78l-.046-.108L9.581 10H6.419l-.477 1.336a1 1 0 0 1-1.917-.56l.033-.112l2.332-6.53A1.71 1.71 0 0 1 8 3Zm0 2.573L7.133 8h1.734L8 5.573Z"/>
+                                    </g>
+                                </svg>
+                            {% endif %}
                         </th>
                         <th scope="col" class="px-6 py-3">
                             SKU
@@ -145,8 +171,12 @@
                         <ul class="flex flex-wrap justify-center space-x-2 mx-auto p-1 w-fit rounded-xl bg-gray-50">
                             {% if products.has_previous %}
                                 <li class="w-auto flex justify-center py-2 px-4 rounded-xl hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
-                                    {% if search %}
+                                    {% if search and order_by %}
+                                        hx-get="{% url 'products_view' %}?search={{ search }}&order_by={{ order_by }}&page={{ products.previous_page_number }}"
+                                    {% elif search %}
                                         hx-get="{% url 'products_view' %}?search={{ search }}&page={{ products.previous_page_number }}"
+                                    {% elif order_by %}
+                                        hx-get="{% url 'products_view' %}?order_by={{ order_by }}&page={{ products.previous_page_number }}"
                                     {% else %}
                                         hx-get="{% url 'products_view' %}?page={{ products.previous_page_number }}"
                                     {% endif %}
@@ -181,8 +211,12 @@
                                         </li>
                                     {% else %}
                                         <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
-                                            {% if search %}
+                                            {% if search and order_by %}
+                                                hx-get="{% url 'products_view' %}?search={{ search }}&order_by={{ order_by }}&page={{ i }}"
+                                            {% elif search %}
                                                 hx-get="{% url 'products_view' %}?search={{ search }}&page={{ i }}"
+                                            {% elif order_by %}
+                                                hx-get="{% url 'products_view' %}?order_by={{ order_by }}&page={{ i }}"
                                             {% else %}
                                                 hx-get="{% url 'products_view' %}?page={{ i }}"
                                             {% endif %}
@@ -199,8 +233,12 @@
                             {% endfor %}
                             {% if products.has_next %}
                                 <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
-                                    {% if search %}
+                                    {% if search and order_by %}
+                                        hx-get="{% url 'products_view' %}?search={{ search }}&order_by={{ order_by }}&page={{ products.next_page_number }}"
+                                    {% elif search %}
                                         hx-get="{% url 'products_view' %}?search={{ search }}&page={{ products.next_page_number }}"
+                                    {% elif order_by %}
+                                        hx-get="{% url 'products_view' %}?order_by={{ order_by }}&page={{ products.next_page_number }}"
                                     {% else %}
                                         hx-get="{% url 'products_view' %}?page={{ products.next_page_number }}"
                                     {% endif %}
