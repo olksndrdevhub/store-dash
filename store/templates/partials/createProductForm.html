@@ -12,9 +12,10 @@
 <form 
     hx-post="{% url 'products_view' %}"
     hx-push-url="true"
-    hx-target="#wrapper"
-    hx-select="#wrapper"
-    hx-swap="outerHTML"
+    hx-target="#products-container"
+    hx-select="#products-container"
+    hx-swap="outerHTML transition:true"
+    x-on:htmx:before-request="showCreateForm = ! showCreateForm; $nextTick(() => {$el.reset()});"
     class="flex flex-col space-y-5 py-10">
     <div class="flex gap-2">
         <div class="w-full">
@@ -48,7 +49,7 @@
         </div>
         <div class="w-full">
             <label for="price" class="block mb-2 text-sm font-medium text-gray-900 ">Enter product price, $</label>
-            <input type="text" min="0" name="price" placeholder="Product price" id="price" value="{{ submitted_price}}"
+            <input type="number" step="0.01" min="0" name="price" placeholder="Product price" id="price" value="{{ submitted_price}}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
                 {% if fname_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
             {% if fname_error %}
@@ -60,6 +61,15 @@
         <div class="w-full">
             <label for="available_quantity" class="block mb-2 text-sm font-medium text-gray-900 ">Enter available quantity, pcs</label>
             <input type="number" min="0" name="available_quantity" placeholder="Available, pcs" id="available_quantity" value="{{ submitted_q}}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                {% if fname_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
+            {% if fname_error %}
+                <span class="text-action-danger">{{ fname_error }}</span>            
+            {% endif %}
+        </div>
+        <div class="w-full">
+            <label for="available_quantity" class="block mb-2 text-sm font-medium text-gray-900 ">Enter product SKU</label>
+            <input type="text" min="0" name="sku" placeholder="product SKU" id="sku" value="{% if product.sku %}{{ product.sku }}{% endif %}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
                 {% if fname_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
             {% if fname_error %}

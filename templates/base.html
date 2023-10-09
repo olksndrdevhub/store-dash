@@ -14,7 +14,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     {% block additional_head_links %}{% endblock additional_head_links %}
     <style>
@@ -58,7 +57,9 @@
             <div class="w-full md:block md:w-auto"
                 x-show="showMenu"
                 x-transition
-                x-cloak>
+                x-cloak
+                hx-boost="true"
+                hx-push-url="true">
                 <ul class="font-medium flex flex-col p-4 md:p-0 rounded-xl bg-secondary md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-primary">
                     {% if user.is_authenticated %}
                         <li>

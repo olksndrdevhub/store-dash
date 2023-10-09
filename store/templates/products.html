@@ -9,7 +9,8 @@
 {% block content %}
 <div class="wrapper flex flex-col w-full xl:w-10/12 mx-auto"
     id="wrapper"
-    x-data="{showCreateForm: false}">
+    x-data="{showCreateForm: false}"
+    x-init="$nextTick(()=>{console.log(showCreateForm)})">
     <div id="create-form-spawn" class="bg-secondary p-3 rounded-xl h-fit mb-5"
         x-show="showCreateForm"
         x-transition
@@ -20,7 +21,7 @@
         <span class="head mb-5 flex justify-between">
             <h1 class="text-left text-3xl font-extrabold">Products</h1>
             <span class="flex space-x-5 items-center">
-                <form>   
+                <div>   
                     <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -28,9 +29,20 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                             </svg>
                         </div>
-                        <input type="search" id="default-search" class="block w-72 max-w-md p-2.5 pl-10 mx-auto text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50" placeholder="Search Products..." required>
+                        <input type="search" name="search" class="block w-80 max-w-md p-2.5 pl-10 mx-auto text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50" placeholder="Type to search..." required
+                            hx-get="{% url 'products_view' %}"
+                            hx-push-url="true"
+                            hx-trigger="keyup changed delay:500ms, search" 
+                            hx-target="#products-table"
+                            hx-select="#products-table"
+                            hx-swap="outerHTML transition:true"
+                            hx-select-oob="table-bottom"
+                            hx-indicator="#indicator"
+                            {% if search %}
+                            value="{{ search }}"
+                            {% endif %}>
                     </div>
-                </form>
+                </div>
                 <span id="indicator" class="bg-green-200 p-2 rounded-xl htmx-indicator">
                     <img class="w-[25px] h-[25px]" src="{% static 'img/spinner.svg' %}"/>
                 </span>
@@ -45,7 +57,7 @@
                 </svg>
             </a>
         </span>
-        <div class="orders-list relative overflow-x-auto">
+        <div class="relative overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="products-table">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                     <tr>
@@ -126,94 +138,98 @@
                 </tbody>
             </table>
         </div>
-        <div id="pagination">
-            {% if products.has_other_pages %}
-                <nav aria-label="products navigation" class="flex">
-                    <ul class="flex flex-wrap justify-center space-x-2 mx-auto p-1 mt-2 w-fit rounded-xl bg-gray-50">
-                        {% if products.has_previous %}
-                            <li class="w-auto flex justify-center py-2 px-4 rounded-xl hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
-                                {% if search %}
-                                    hx-get="{% url 'products_view' %}?search={{ search }}&page={{ products.previous_page_number }}"
-                                {% else %}
-                                    hx-get="{% url 'products_view' %}?page={{ products.previous_page_number }}"
-                                {% endif %}
-                                hx-target="#products-container"
-                                hx-select="#products-container"
-                                hx-swap="outerHTML show:#header:top"
-                                hx-push-url="true"
-                                hx-indicator="#indicator"
-                                >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                                </svg>                              
-                            </li>
-                        {% else %}
-                            <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-400 hover:cursor-default">
-                                <span class="">
+        <div id="table-bottom" class="flex justify-between items-center min-h-[2rem] mt-3">
+            <div id="pagination">
+                {% if products.has_other_pages %}
+                    <nav aria-label="products navigation" class="flex">
+                        <ul class="flex flex-wrap justify-center space-x-2 mx-auto p-1 w-fit rounded-xl bg-gray-50">
+                            {% if products.has_previous %}
+                                <li class="w-auto flex justify-center py-2 px-4 rounded-xl hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
+                                    {% if search %}
+                                        hx-get="{% url 'products_view' %}?search={{ search }}&page={{ products.previous_page_number }}"
+                                    {% else %}
+                                        hx-get="{% url 'products_view' %}?page={{ products.previous_page_number }}"
+                                    {% endif %}
+                                    hx-target="#products-container"
+                                    hx-select="#products-container"
+                                    hx-swap="outerHTML show:#header:top transition:true"
+                                    hx-push-url="true"
+                                    hx-indicator="#indicator"
+                                    >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                                    </svg>  
-                                </span>
-                            </li>
-                        {% endif %}
-                        {% for i in page_range|default_if_none:products.paginator.get_elided_page_range %}
-                            {% if i == products.paginator.ELLIPSIS %}
-                                <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-400 hover:cursor-default" aria-current="page">
-                                    <span class="">{{ i }}</span>
+                                    </svg>                              
                                 </li>
                             {% else %}
-                                {% if products.number == i %}
-                                    <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-900 bg-green-200 hover:cursor-default" aria-current="page">
+                                <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-400 hover:cursor-default">
+                                    <span class="">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                        </svg>  
+                                    </span>
+                                </li>
+                            {% endif %}
+                            {% for i in page_range|default_if_none:products.paginator.get_elided_page_range %}
+                                {% if i == products.paginator.ELLIPSIS %}
+                                    <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-400 hover:cursor-default" aria-current="page">
                                         <span class="">{{ i }}</span>
                                     </li>
                                 {% else %}
-                                    <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
-                                        {% if search %}
-                                            hx-get="{% url 'products_view' %}?search={{ search }}&page={{ i }}"
-                                        {% else %}
-                                            hx-get="{% url 'products_view' %}?page={{ i }}"
-                                        {% endif %}
-                                        hx-target="#products-container"
-                                        hx-select="#products-container"
-                                        hx-swap="outerHTML show:#header:top"
-                                        hx-push-url="true"
-                                        hx-indicator="#indicator"
-                                        >
-                                        {{ i }}
-                                    </li>
+                                    {% if products.number == i %}
+                                        <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-900 bg-green-200 hover:cursor-default" aria-current="page">
+                                            <span class="">{{ i }}</span>
+                                        </li>
+                                    {% else %}
+                                        <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
+                                            {% if search %}
+                                                hx-get="{% url 'products_view' %}?search={{ search }}&page={{ i }}"
+                                            {% else %}
+                                                hx-get="{% url 'products_view' %}?page={{ i }}"
+                                            {% endif %}
+                                            hx-target="#products-container"
+                                            hx-select="#products-container"
+                                            hx-swap="outerHTML show:#header:top transition:true"
+                                            hx-push-url="true"
+                                            hx-indicator="#indicator"
+                                            >
+                                            {{ i }}
+                                        </li>
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                        {% if products.has_next %}
-                            <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
-                                {% if search %}
-                                    hx-get="{% url 'products_view' %}?search={{ search }}&page={{ products.next_page_number }}"
-                                {% else %}
-                                    hx-get="{% url 'products_view' %}?page={{ products.next_page_number }}"
-                                {% endif %}
-                                hx-target="#products-container"
-                                hx-select="#products-container"
-                                hx-swap="outerHTML show:#header:top"
-                                hx-push-url="true"
-                                hx-indicator="#indicator"
-                                >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                </svg>  
-                            </li>
-                        {% else %}
-                            <li class="w-auto flex justify-center sm:ml-3 py-2 px-4 rounded-xl text-[--text-minor] hover:cursor-default">
-                                <span class="">
+                            {% endfor %}
+                            {% if products.has_next %}
+                                <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
+                                    {% if search %}
+                                        hx-get="{% url 'products_view' %}?search={{ search }}&page={{ products.next_page_number }}"
+                                    {% else %}
+                                        hx-get="{% url 'products_view' %}?page={{ products.next_page_number }}"
+                                    {% endif %}
+                                    hx-target="#products-container"
+                                    hx-select="#products-container"
+                                    hx-swap="outerHTML show:#header:top transition:true"
+                                    hx-push-url="true"
+                                    hx-indicator="#indicator"
+                                    >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                                     </svg>  
-                                </span>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            {% endif %}
+                                </li>
+                            {% else %}
+                                <li class="w-auto flex justify-center sm:ml-3 py-2 px-4 rounded-xl text-[--text-minor] hover:cursor-default">
+                                    <span class="">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                        </svg>  
+                                    </span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+            <span class="text-sm text-gray-400">Total: {{ products.paginator.count }} items</span>
         </div>
+
     </div>
 </div>
 {% endblock content %}

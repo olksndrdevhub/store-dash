@@ -11,7 +11,7 @@ def get_paginated_query(query, request, item=None):
     '''
     helper function to generate paginated query
     '''
-    paginator = Paginator(query, 5)
+    paginator = Paginator(query, 10)
     if item:
         # Calculate the page number by finding the index of the item in the list and dividing by the page size
         item_index = list(query).index(item)
@@ -46,18 +46,27 @@ def products_view(request):
         'categories': Category.objects.all(),
         'colors': Color.objects.all(),
     }
+    products = Product.objects.all()
+
+    if 'search' in request.GET and request.GET.get('search').strip() != '':
+        context['search'] = request.GET.get('search')
+        products = products.filter(name__icontains=request.GET.get('search'))
+
     context['products'], context['page_range'] = get_paginated_query(
-        Product.objects.all(),
+        products,
         request
     )
 
 
     if request.method == 'POST' and request.htmx:
-        category: str = request.POST.get('category', None)
-        color: str = request.POST.get('color', None)
-        name: str = request.POST.get('name', None)
-        price: str = request.POST.get('price', 0.0)
-        available_quantity: str = request.POST.get('available_quantity', 0)
+        data = request.POST
+        print(data)
+        name: str = data.get('name', '')
+        price_str: str = data.get('price', '0.0')
+        category: str = data.get('category', '')
+        color: str = data.get('color', '')
+        available_quantity: str = data.get('available_quantity', '0')
+        sku: str = data.get('sku', '')
 
         if name is None or name.strip() == '':
             messages.add_message(
@@ -66,16 +75,22 @@ def products_view(request):
                 "Product name is required!"
             )
             return render(request, 'products.html', context)
+        if price_str.strip() == '':
+            price_str = '0.0'
+        price = float(price_str)
         new_product = Product.objects.create(
             name=name.strip(),
             price=price,
         )
-        if category and category.strip() != '':
+        if category.strip() != '' and Category.objects.filter(name=category).exists():
             new_product.category = Category.objects.get(name=category)
-        if color and color.strip() != '':
+        if color.strip() != '' and Color.objects.filter(name=color).exists():
             new_product.color = Color.objects.get(name=color)
-        if available_quantity and available_quantity.strip() != '':
-            new_product.available_quantity = int(available_quantity)
+        if available_quantity.strip() == '':
+            available_quantity = '0'
+        new_product.available_quantity = int(available_quantity)
+        if sku.strip() != '':
+            new_product.sku = sku.strip()
         new_product.save()
         messages.add_message(
             request,
@@ -113,12 +128,12 @@ def product_item_view(request, pk):
         product: Product = context['product']
         data = request.POST
         print(data)
-        name: str = data.get('name', None)
-        price: str = data.get('price', None)
-        category: str = data.get('category', None)
-        color: str = data.get('color', None)
-        available_quantity: str = data.get('available_quantity', None)
-        sku: str = data.get('sku', None)
+        name: str = data.get('name', '')
+        price_str: str = data.get('price', '0.0')
+        category: str = data.get('category', '')
+        color: str = data.get('color', '')
+        available_quantity: str = data.get('available_quantity', '0')
+        sku: str = data.get('sku', '')
         if name is None or name.strip() == '':
             messages.add_message(
                 request,
@@ -127,21 +142,17 @@ def product_item_view(request, pk):
             )
             return render(request, 'partials/editProductForm.html', context)
         product.name = name.strip()
-        if price is None or price.strip() == '':
-            messages.add_message(
-                request,
-                messages.ERROR,
-                "Product price is required!"
-            )
-            return render(request, 'partials/editProductForm.html', context)
-        product.price = price.strip()
-        if category and category.strip() != '':
+        if price_str.strip() == '':
+            price_str = '0.0'
+        product.price = float(price_str)
+        if category.strip() != '' and Category.objects.filter(name=category).exists():
             product.category = Category.objects.get(name=category)
-        if color and color.strip() != '':
+        if color.strip() != '' and Color.objects.filter(name=color).exists():
             product.color = Color.objects.get(name=color)
-        if available_quantity and available_quantity.strip() != '':
-            product.available_quantity = int(available_quantity)
-        if sku and sku.strip() != '':
+        if available_quantity.strip() == '':
+            available_quantity = '0'
+        product.available_quantity = int(available_quantity)
+        if sku.strip() != '':
             product.sku = sku.strip()
         product.save()
         messages.add_message(
