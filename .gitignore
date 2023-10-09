@@ -2,6 +2,4 @@
 .vscode
 __pycache__
 .env
-.pwa
-node_modules
 media
