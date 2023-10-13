@@ -698,6 +698,14 @@ video {
   margin-top: 1.25rem;
 }
 
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
+.ml-1\.5 {
+  margin-left: 0.375rem;
+}
+
 .block {
   display: block;
 }
@@ -836,6 +844,14 @@ video {
   width: 100%;
 }
 
+.w-\[1\/7\] {
+  width: 1/7;
+}
+
+.w-1\/6 {
+  width: 16.666667%;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
@@ -844,16 +860,36 @@ video {
   max-width: 1280px;
 }
 
+.flex-auto {
+  flex: 1 1 auto;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
+}
+
 .flex-shrink-0 {
   flex-shrink: 0;
+}
+
+.flex-shrink {
+  flex-shrink: 1;
 }
 
 .table-auto {
   table-layout: auto;
 }
 
+.table-fixed {
+  table-layout: fixed;
+}
+
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .grid-flow-row {
@@ -866,6 +902,10 @@ video {
 
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.flex-row {
+  flex-direction: row;
 }
 
 .flex-col {
@@ -1051,6 +1091,11 @@ video {
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 
+.bg-gray-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
+}
+
 .bg-gray-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
@@ -1078,6 +1123,16 @@ video {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.bg-green-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 253 244 / var(--tw-bg-opacity));
+}
+
+.bg-green-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 252 231 / var(--tw-bg-opacity));
 }
 
 .fill-action-danger {
@@ -1174,6 +1229,11 @@ video {
 .py-5 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .pb-5 {
@@ -1530,19 +1590,6 @@ input.valid {
 
 /* Profile page end css */
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th:last-child,
-td:last-child {
-  position: sticky;
-  right: 0;
-  --tw-text-opacity: 1;
-  background-color: white;
-}
-
 .hover\:origin-top:hover {
   transform-origin: top;
 }
@@ -1617,6 +1664,11 @@ td:last-child {
 .hover\:bg-secondary:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(var(--color-secondary) / var(--tw-bg-opacity));
+}
+
+.hover\:bg-green-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 252 231 / var(--tw-bg-opacity));
 }
 
 .hover\:text-gray-900:hover {
