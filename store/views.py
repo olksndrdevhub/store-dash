@@ -11,6 +11,7 @@ def get_paginated_query(query, request, item=None):
     '''
     helper function to generate paginated query
     '''
+    sleep(0.5) # simulate slow connection
     paginator = Paginator(query, 10)
     if item:
         # Calculate the page number by finding the index of the item in the list and dividing by the page size
@@ -51,6 +52,24 @@ def products_view(request):
         'order_by': '-created',
     }
     products = Product.objects.all()
+
+    if 'filter_category' in request.GET and request.GET.get('filter_category').strip() != '':
+        context['filter_category'] = request.GET.get('filter_category')
+        if request.GET.get('filter_category') == 'all':
+            pass
+        elif request.GET.get('filter_category') == 'none':
+            products = products.filter(category__isnull=True)
+        else:
+            products = products.filter(category__name=request.GET.get('filter_category'))
+    
+    if 'filter_color' in request.GET and request.GET.get('filter_color').strip() != '':
+        context['filter_color'] = request.GET.get('filter_color')
+        if request.GET.get('filter_color') == 'all':
+            pass
+        elif request.GET.get('filter_color') == 'none':
+            products = products.filter(color__isnull=True)
+        else:
+            products = products.filter(color__name=request.GET.get('filter_color'))
 
     if 'search' in request.GET and request.GET.get('search').strip() != '':
         context['search'] = request.GET.get('search')
