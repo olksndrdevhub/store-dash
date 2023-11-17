@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Client |{% endblock title %}
+
+{% block additional_head_links %}{% endblock additional_head_links %}
+{% block additional_css %}
+{% endblock additional_css %}
+
+{% block content %}
+<div class="wrapper w-full grid xl:grid-cols-2 gap-5 mx-auto"
+    x-init="$nextTick(() => {
+        var btn = document.getElementById('returnBtn');
+        var prevUrl = getCookie('prevUrl');
+        if (prevUrl !== undefined) {
+            btn.setAttribute('hx-get', prevUrl);
+        }
+    })">
+    {% if client %}
+        {% include 'partials/editClientForm.html' %}
+        <div class="orders bg-secondary p-3 rounded-xl h-fit">
+            <div>
+                <h1 class="text-2xl font-normal text-gray-600">
+                    Orders
+                </h1>
+                <hr>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block additional_javascript %}
+{% endblock additional_javascript %}

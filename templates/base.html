@@ -58,8 +58,9 @@
                 x-show="showMenu"
                 x-transition
                 x-cloak
+                hx-push-url="true"
                 hx-boost="true"
-                hx-push-url="true">
+                hx-swap="outerHTML transition:true">
                 <ul class="font-medium flex flex-col p-4 md:p-0 rounded-xl bg-secondary md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-primary">
                     {% if user.is_authenticated %}
                         <li>
@@ -92,6 +93,7 @@
         </div>
     </nav>
     <main class="p-5">
+        <!-- {% include 'breadcrumbs.html' %} -->
         {% block content %}
         {% endblock content %}
     </main>

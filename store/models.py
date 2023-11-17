@@ -40,3 +40,23 @@ class Color(models.Model):
 
     def __str__(self) -> str:
         return str(self.name)
+
+
+class Client(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    phone_number = models.CharField(max_length=100)
+    delivery_address = models.TextField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ('-created',)
+    
+    @property
+    def full_name(self) -> str:
+        return f'{self.first_name} {self.last_name}'
+    
+    def __str__(self) -> str:
+        return f'{self.email}'
