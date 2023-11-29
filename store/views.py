@@ -1,10 +1,9 @@
-from time import sleep
 from django.shortcuts import render, resolve_url
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .models import Product, Category, Color, Client
+from .models import Product, Category, Color, Client, Order
 from account.models import User
 
 
@@ -37,9 +36,17 @@ def get_paginated_query(query, request, item=None):
 def store_view(request):
     context = {}
     user: User = request.user
+
     context["products"] = Product.objects.all().order_by("-created")[:5]
     context["products_count"] = Product.objects.all().count()
     context["out_of_stock_count"] = Product.objects.filter(available_quantity=0).count()
+
+    context["clients"] = Client.objects.all().order_by("-created")[:5]
+    context["clients_count"] = Client.objects.all().count()
+
+    context["orders"] = Order.objects.all().order_by("-created")[:5]
+    context["orders_count"] = Order.objects.all().count()
+    context["completed_count"] = Order.objects.filter(completed=True).count()
 
     return render(request, "store.html", context)
 
@@ -324,5 +331,25 @@ def client_item_view(request, pk):
 def orders_view(request):
     context: dict = {}
     user: User = request.user
+    context["orders"] = Order.objects.all()
+    context["orders_count"] = Order.objects.all().count()
+    context["order_statuses"] = Order.OrderStatus.choices
 
     return render(request, "orders.html", context)
+
+
+
+def hx_search_clients(request):
+    context: dict = {}
+    user: User = request.user
+    clients = Client.objects.all()
+    if "clients_search" in request.GET and request.GET.get("clients_search").strip() != "":
+        context["clients_search"] = request.GET.get("clients_search")
+        query = request.GET.get("clients_search")
+        clients = (
+            clients.filter(first_name__icontains=query)
+            | clients.filter(last_name__icontains=query)
+            | clients.filter(email__icontains=query)
+            | clients.filter(phone_number__icontains=query)
+        )
+    return render(request, "partials/clientsSearchResults.html", {"clients": clients})

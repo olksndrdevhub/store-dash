@@ -1,0 +1,88 @@
+<span class="flex justify-between">
+    <h1 class="text-3xl font-extrabold">Add New Order</h1>
+    <button type="reset"
+        x-on:click="showCreateForm = ! showCreateForm"
+        class="bg-transparent border border-gray-800 text-gray-600 hover:text-white hover:bg-gray-600 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+        </svg>
+        <span class="sr-only">Close modal</span>
+    </button>
+</span>
+<form 
+    id="create-prder-form"
+    hx-post="{% url 'orders_view' %}"
+    hx-push-url="true"
+    hx-target="#create-order-form"
+    hx-select="#create-order-form"
+    hx-swap="outerHTML transition:true"
+    class="flex flex-col space-y-5 py-10">
+    <div class="flex gap-2">
+        <div class="w-full relative">
+            <label for="client" class="block mb-2 text-sm font-medium text-gray-900 ">Select Client</label>
+            <input required type="text" name="clients_search" placeholder="Start typing..." id="clients_search" value="{{submitted_f_name}}"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            hx-get="{% url 'hx_search_clients' %}"
+            hx-trigger="keyup[this.value.length > 3] changed delay:500ms"
+            hx-target="#clients-list"
+            hx-select="#clients-list"
+            hx-push-url="false"
+            hx-swap="outerHTML transition:true">
+            {% include 'partials/clientsSearchResults.html' %}
+        </div>
+        <div class="w-full">
+            <label for="product" class="block mb-2 text-sm font-medium text-gray-900 ">Select Product</label>
+            <input required type="text" name="last_name" placeholder="Start typing..." id="last_name" value="{{ submitted_l_name}}"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+        </div>
+    </div>
+    <div class="flex gap-2">
+        <div class="w-full">
+            <label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 ">Enter quantity</label>
+            <input required type="number" min="1" max="1000" name="quantity" placeholder="Quantity" id="quantity" value="{{ submitted_quantity }}"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                {% if quantity_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
+            {% if quantity_error %}
+                <span class="text-action-danger">{{ quantity_error }}</span>            
+            {% endif %}          
+        </div>
+        <div class="w-full">
+            <label for="product_price" class="block mb-2 text-sm font-medium text-gray-900 ">Product price, $</label>
+            <input required type="number" step="0.01" min="0" name="product_price" placeholder="Price" id="product_price" value="{{ submitted_price }}"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                {% if product_price_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
+            {% if product_price_error %}
+                <span class="text-action-danger">{{ product_price_error }}</span>            
+            {% endif %}
+        </div>
+        <div class="w-full">
+            <label for="total_cost" class="block mb-2 text-sm font-medium text-gray-900 ">Total cost, $</label>
+            <input required type="number" step="0.01" min="0" name="total_cost" placeholder="0.00" id="total_cost" disabled value="{{ submitted_price }}"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+        </div>
+    </div>
+    <div class="flex gap-2">
+        <div class="w-full">
+            <label for="address" class="block mb-2 text-sm font-medium text-gray-900 ">Enter delivery address</label>
+            <textarea required type="text" name="address" placeholder="Delivery address" id="address"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                {% if address_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">{{ submitted_address }}</textarea>
+            {% if address_error %}
+                <span class="text-action-danger">{{ address_error }}</span>            
+            {% endif %}
+        </div>
+    </div>
+    <div class="flex justify-end">
+        <!-- <button type="reset" class="border border-accent px-5 py-2.5
+            my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
+            transition transform duration-200 ease-in-out hover:cursor-pointer"
+            x-on:click="showCreateForm = ! showCreateForm">
+            Cancel
+        </button> -->
+        <button type="submit" class="bg-action-success text-white px-5 py-2.5
+            my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
+            transition transform duration-200 ease-in-out hover:cursor-pointer"">
+            Create
+        </button>
+    </div>
+</form>

@@ -1,0 +1,9 @@
+<ul id="clients-list" class="absolute top-full w-[100%] max-h-[200px] overflow-y-auto bg-secondary text-sm"
+    x-on:click.outside="$el.style.display='none'">
+    {% for client in clients %}
+        <li class="flex w-full flex-col py-1 px-2 cursor-pointer hover:bg-primary">
+            <span class="flex justify-between"><span>{{ client.email }}</span> <span>{{ client.phone_number }}</span></span>
+            <span>{{ client.full_name }}</span>
+        </li>
+    {% endfor %}
+</ul>
