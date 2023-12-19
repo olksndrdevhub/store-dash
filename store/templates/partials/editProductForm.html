@@ -98,8 +98,8 @@
                 </div>
             </div>
             <div class="flex justify-between">
-                <span class="text-sm text-gray-400">Created: {{ product.created }}</span>
-                <span class="text-sm text-gray-400">Updated: {{ product.updated }}</span>
+                <span class="text-sm text-gray-400">Created: {{ product.created|date:"d.m.Y H:i" }}</span>
+                <span class="text-sm text-gray-400">Updated: {{ product.updated|date:"d.m.Y H:i" }}</span>
             </div>
             <div class="" x-data="{showDeleteConfirmation : false}">
                 <div x-show="!showDeleteConfirmation" x-cloak

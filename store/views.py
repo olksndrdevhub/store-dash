@@ -1,9 +1,10 @@
-from django.shortcuts import render, resolve_url
+from django.shortcuts import render, resolve_url, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpRequest
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .models import Product, Category, Color, Client, Order
+from .models import Product, Category, Color, Client, Order, OrderItem
 from account.models import User
 
 
@@ -46,7 +47,7 @@ def store_view(request):
 
     context["orders"] = Order.objects.all().order_by("-created")[:5]
     context["orders_count"] = Order.objects.all().count()
-    context["completed_count"] = Order.objects.filter(completed=True).count()
+    context["completed_count"] = Order.objects.filter(status=Order.OrderStatus.COMPLETED).count()
 
     return render(request, "store.html", context)
 
@@ -256,9 +257,9 @@ def clients_view(request):
     return render(request, "clients.html", context)
 
 
-def sanitize_post_data(data: dict) -> dict:
+def sanitize_post_data(request: HttpRequest) -> dict:
     errors: dict = {}
-    for key, value in data.items():
+    for key, value in request.POST.items():
         if value is None or value.strip() == "":
             errors[
                 f"{key}_error"
@@ -330,26 +331,189 @@ def client_item_view(request, pk):
 @login_required
 def orders_view(request):
     context: dict = {}
-    user: User = request.user
-    context["orders"] = Order.objects.all()
     context["orders_count"] = Order.objects.all().count()
     context["order_statuses"] = Order.OrderStatus.choices
+    orders = Order.objects.all()
 
-    return render(request, "orders.html", context)
+    if "search" in request.GET and request.GET.get("search").strip() != "":
+        context["search"] = request.GET.get("search")
+        query = request.GET.get("search")
+        orders = (
+            orders.filter(client__first_name__icontains=query)
+            | orders.filter(client__last_name__icontains=query)
+            | orders.filter(client__email__icontains=query)
+            | orders.filter(client__phone_number__icontains=query)
+            | orders.filter(client__delivery_address__icontains=query)
+        )
+
+    if "filter_status" in request.GET and request.GET.get("filter_status").strip() != "":
+        context["filter_status"] = request.GET.get("filter_status")
+        if request.GET.get("filter_status") == "all":
+            orders = orders
+        else:
+            orders = orders.filter(
+                status=request.GET.get("filter_status")
+            )
+
+    if "filter_payed" in request.GET and request.GET.get("filter_payed").strip() != "":
+        context["filter_payed"] = request.GET.get("filter_payed")
+        if request.GET.get("filter_payed") == "all":
+            orders = orders
+        elif request.GET.get("filter_payed") == "true":
+            orders = orders.filter(payment_completed=True)
+        elif request.GET.get("filter_payed") == "false":
+            orders = orders.filter(payment_completed=False)
+    
+    if request.method == "POST" and request.htmx:
+        # create order
+        print(request.POST)
+    
+        errors = sanitize_post_data(request)
+        context.update(errors)
+        for error in errors.values():
+            messages.add_message(request, messages.ERROR, error)
+        if len(errors) > 0:
+            context["orders"], context["page_range"] = get_paginated_query(
+                Order.objects.all(),
+                request
+            )
+            return render(request, "orders.html", context)
+        
+        result = update_or_create_order(request, None)
+        messages.add_message(request, result["status"], result["message"])
+        
+        context["orders_count"] = Order.objects.all().count()
+        context["orders"], context["page_range"] = get_paginated_query(Order.objects.all(), request)
+        response = render(request, "orders.html", context)
+        response["HX-Retarget"] = "#orders-container"
+        response["HX-Reselect"] = "#orders-container"
+        response["HX-Trigger-After-Swap"] = "close-create-form"
+        return response
+
+    context["orders"], context["page_range"] = get_paginated_query(orders, request)
+    response = render(request, "orders.html", context)
+    return response
+
+
+@login_required
+def order_item_view(request, pk):
+    try:
+        order = Order.objects.get(pk=pk)
+    except Order.DoesNotExist:
+        messages.add_message(request, messages.ERROR, "Order does not exist!")
+        return render(request, "order_page.html", {"order": None})
+    context: dict = {
+        "order": order,
+        "order_statuses": Order.OrderStatus.choices,
+    }
+
+    if request.htmx and request.method == "POST":
+        print(request.POST)
+        result = update_or_create_order(request, pk)
+        messages.add_message(request, result["status"], result["message"])
+        context["order"] = Order.objects.get(pk=pk)
+        return render(request, "partials/editOrderForm.html", context)
+
+    if request.htmx and request.method == "DELETE":
+        order.delete()
+        messages.add_message(request, messages.SUCCESS, "Order deleted successfully!")
+        response = redirect("orders_view")
+        return response
+
+    return render(request, "order_page.html", context)
 
 
 
-def hx_search_clients(request):
+def update_or_create_order(request: HttpRequest, id: int | None) -> dict:
+    if id is None:
+        try:
+            client = Client.objects.get(pk=request.POST.get("client_id", None))
+        except Client.DoesNotExist:
+            return {"message": "Client does not exist!", "status": messages.ERROR}
+        
+        product_ids = request.POST.getlist("product_ids", [])
+        product_quantities = request.POST.getlist("quantities", [])
+        product_prices = request.POST.getlist("product_prices", [])        
+        zipped_data = zip(product_ids, product_quantities, product_prices)
+        delivery_address = request.POST.get("address", None)
+        if delivery_address is None or delivery_address.strip() == "":
+            return {"message": "Delivery address is required!", "status": messages.ERROR}
+
+        try:
+            order = Order.objects.create(
+                client=client,
+                status=Order.OrderStatus.PLACED,
+                payment_completed=True if request.POST.get("payment_completed", False) == "on" else False,
+                delivery_address=delivery_address
+            )
+            for product_id, quantity, price in zipped_data:
+                product = Product.objects.get(id=product_id)
+                OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=quantity,
+                    ordered_price=price
+                )
+        except Exception as e:
+            print(e)
+            return {"message": "An error occurred while creating order!", "status": messages.ERROR}
+    
+        return {"message": "Order created successfully!", "status": messages.SUCCESS}
+    else:
+        try:
+            order = Order.objects.get(id=id)
+            order.status = request.POST.get("status", Order.OrderStatus.PLACED)
+            order.payment_completed = True if request.POST.get("payment_completed", False) == "on" else False
+            order.delivery_address = request.POST.get("address", None)
+            order.save()
+        except Order.DoesNotExist:
+            return {"message": "Order does not exist!", "status": messages.ERROR}
+        except Exception as e:
+            print(e)
+            return {"message": "An error occurred while updating order!", "status": messages.ERROR}
+        return {"message": "Order updated successfully!", "status": messages.SUCCESS}
+
+
+def hx_remove_item_from_order(request, pk, item_pk):
+    if not request.user.is_authenticated:
+        messages.add_message(request, messages.ERROR, "You must be logged in to perform this action!")
+    try:
+        order = Order.objects.get(pk=pk)
+        order_item = OrderItem.objects.get(pk=item_pk, order=order)
+        # order_item.delete()
+        messages.add_message(request, messages.SUCCESS, "Order item deleted successfully!")
+        return redirect("order_item_view", pk=pk)
+    except Order.DoesNotExist:
+        messages.add_message(request, messages.ERROR, "Order does not exist!")
+    except OrderItem.DoesNotExist:
+        messages.add_message(request, messages.ERROR, "Order Item does not exist!")
+    except Exception as e:
+        print(e)
+        messages.add_message(request, messages.ERROR, "An error occurred while deleting order item!")
+
+
+def hx_search_items(request):
     context: dict = {}
-    user: User = request.user
-    clients = Client.objects.all()
+    items = ()
     if "clients_search" in request.GET and request.GET.get("clients_search").strip() != "":
+        items = Client.objects.all().values('id','first_name', 'last_name', 'email', 'phone_number', 'delivery_address')
         context["clients_search"] = request.GET.get("clients_search")
         query = request.GET.get("clients_search")
-        clients = (
-            clients.filter(first_name__icontains=query)
-            | clients.filter(last_name__icontains=query)
-            | clients.filter(email__icontains=query)
-            | clients.filter(phone_number__icontains=query)
+        items = (
+            items.filter(first_name__icontains=query)
+            | items.filter(last_name__icontains=query)
+            | items.filter(email__icontains=query)
+            | items.filter(phone_number__icontains=query)
         )
-    return render(request, "partials/clientsSearchResults.html", {"clients": clients})
+    if "products_search" in request.GET and request.GET.get("products_search").strip() != "":
+        items = Product.objects.all().values('id','name', 'sku', 'price')
+        context["products_search"] = request.GET.get("products_search")
+        query = request.GET.get("products_search")
+        items = (
+            items.filter(sku__icontains=query)
+            | items.filter(name__icontains=query)
+        )
+    context["items"] = items
+    if len(items) == 0:
+        context["not_found"] = True
+    return render(request, "components/itemsDropdownSearch.html", context)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Product, Category, Color
+from .models import Product, Category, Color, Order, OrderItem, Client
 
 # Register your models here.
 
@@ -26,3 +26,8 @@ class CategoryAdmin(admin.ModelAdmin):
 class ColorAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
+
+
+admin.site.register(Order)
+admin.site.register(OrderItem)
+admin.site.register(Client)

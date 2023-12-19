@@ -71,7 +71,6 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(default=1)
     ordered_price = models.DecimalField(max_digits=10, decimal_places=2)
     created = models.DateTimeField(auto_now_add=True)
-    delivery_address = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
@@ -92,6 +91,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     payment_completed = models.BooleanField(default=False)
+    delivery_address = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=2, choices=OrderStatus.choices, default=OrderStatus.PLACED)
 
     def __str__(self):
@@ -99,7 +99,11 @@ class Order(models.Model):
 
     @property
     def total_cost(self):
-        cost = 0.0
+        cost = Decimal(0.0)
         for item in self.items.all():
             cost += item.cost
         return cost
+
+    class Meta:
+        ordering = ("-created",)
+

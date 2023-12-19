@@ -127,6 +127,132 @@
         }
     </script>
     <script src="{% static 'toasts.js' %}"></script>
+    <script>
+        function processSelectedItem(item, originalInput) {
+            let itemId = item.getAttribute('data-item-id');
+            let itemName = item.getAttribute('data-item-name');
+            let itemPrice = item.getAttribute('data-item-price');
+            let itemAddress = item.getAttribute('data-item-address');
+            // get original id and split to get number after -
+            let originalInputId = originalInput.getAttribute('id');
+            let originalInputIdParts = originalInputId.split('-');
+            let originalInputIdNumber = parseInt(originalInputIdParts[1]);
+    
+            let select = document.createElement('select');
+            select.setAttribute('class', originalInput.getAttribute('class'));
+            
+            let option = document.createElement('option');
+            option.setAttribute('value', itemId);
+            option.setAttribute('selected', 'selected');
+            option.innerText = itemName;
+            select.appendChild(option);
+            
+            originalInput.parentNode.replaceChild(select, originalInput);
+            
+            // remove items-list
+            let itemsList = document.getElementById('items-list');
+            itemsList.parentNode.removeChild(itemsList);
+            
+            select.addEventListener('click', function(e) {
+                originalInput.value = '';
+                select.parentNode.replaceChild(originalInput, select);
+                originalInput.focus();
+            });
+            
+            if  (originalInput.name == 'products_search') {
+                select.setAttribute('name', 'product_ids');
+                select.setAttribute('id', 'product_id-' + originalInputIdNumber);
+                // set price
+                let priceInput = document.getElementById('product_price-'+ originalInputIdNumber);
+                priceInput.value = itemPrice;
+                quantityInput = document.getElementById('quantity-' + originalInputIdNumber);
+                quantityInput.value = 1;
+                quantityInput.focus();
+                costInput = document.getElementById('cost-' + originalInputIdNumber);
+                costInput.value = (priceInput.value * quantityInput.value).toFixed(2);
+                setTotalCost();
+            }
+            if (originalInput.name == 'clients_search') {
+                select.setAttribute('name', 'client_id');
+                select.setAttribute('id', 'client_id');
+                // set address
+                let addressInput = document.getElementById('address');
+                addressInput.value = itemAddress;
+                addressInput.focus();
+            }
+        }
+    
+        function updateCost() {
+            let elem = event.target;
+    
+            let InputId = elem.getAttribute('id');
+            let InputIdParts = InputId.split('-');
+            let InputIdNumber = parseInt(InputIdParts[1]);
+    
+            quantityInput = document.getElementById("quantity-" + InputIdNumber);
+            priceInput = document.getElementById("product_price-" + InputIdNumber);
+            costInput = document.getElementById("cost-" + InputIdNumber);
+            costInput.value = (priceInput.value * quantityInput.value).toFixed(2);
+            
+            setTotalCost();
+        }
+    
+        function setTotalCost() {
+            let totalCost = document.getElementById('total_cost');
+            let costInputs = document.querySelectorAll('[id^="cost-"]');
+            let total = 0;
+            costInputs.forEach(function(costInput) {
+                if (costInput.value == '') {
+                    total += 0;
+                } else {
+                    total += parseFloat(costInput.value);
+                }
+            });
+            totalCost.value = total.toFixed(2);
+        }
+    
+        function copyOrderItemComponent() {
+            var orderItemComponents = document.querySelectorAll('[data-order-item-component]');
+            var orderItemComponentTemplate = document.querySelector('[data-order-item-component-template]');
+            var lastOrderItemComponent = orderItemComponents[orderItemComponents.length - 1];
+            var lastItemId = lastOrderItemComponent.getAttribute('id').split('-')[1];
+            // convert to number
+            lastItemId = parseInt(lastItemId);
+            var orderItemComponentCopy = orderItemComponentTemplate.cloneNode(true);
+            orderItemComponentCopy.removeAttribute('data-order-item-component-template');
+            orderItemComponentCopy.setAttribute('data-order-item-component', '');
+            orderItemComponentCopy.setAttribute('id', 'orderItemComponent-' + (lastItemId + 1));
+            orderItemComponentCopy.removeAttribute('style');
+            var orderItemComponentCopyInputs = orderItemComponentCopy.querySelectorAll('input');
+            var orderItemComponentCopyLabels = orderItemComponentCopy.querySelectorAll('label');
+            orderItemComponentCopyLabels.forEach(function(label) {
+                var labelFor = label.getAttribute('for');
+                label.setAttribute('for', labelFor + (lastItemId + 1));
+            });
+            orderItemComponentCopyInputs.forEach(function(input) {
+                var inputId = input.getAttribute('id');
+                input.setAttribute('id', inputId + (lastItemId + 1));
+                input.value = '';
+            });
+            lastOrderItemComponent.parentNode.insertBefore(orderItemComponentCopy, lastOrderItemComponent.parentNode.lastChild.previousSibling);
+            htmx.process(orderItemComponentCopy);
+        }
+    
+    
+        function deleteOrderItemComponent(elem) {
+            // if total elems count = 1, then just clear inputs
+            var orderItemComponents = document.querySelectorAll('[data-order-item-component]');
+            if (orderItemComponents.length == 1) {
+                elem.querySelectorAll('input').forEach(function(input) {
+                    input.value = '';
+                });
+            } else if (orderItemComponents.length > 1) {
+                elem.remove();
+            }
+            setTotalCost();
+        }
+    
+    </script>
     {% block additional_javascript %}{% endblock additional_javascript %}
 </body>
 </html>

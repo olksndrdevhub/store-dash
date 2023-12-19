@@ -56,7 +56,7 @@ function removeToast(target) {
 function removeAllToasts(){
   htmx.findAll(".toast:not([data-toast-template])").forEach((element) => {
     setTimeout(function() {
-      // _removeFadeOut(element, 1000)
+      _removeFadeOut(element, 1000)
     }, 5000)
   })
 }

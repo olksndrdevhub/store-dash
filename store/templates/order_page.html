@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order |{% endblock title %}
+
+{% block additional_head_links %}{% endblock additional_head_links %}
+{% block additional_css %}
+{% endblock additional_css %}
+
+{% block content %}
+<!-- template for order items, placed outside of the form -->
+<div class="flex items-end relative gap-2 text-left" style="display: none;" data-order-item-component-template>
+    <div class="w-full relative">
+        <label for="products_search-" class="block mb-2 text-sm font-medium text-gray-900 ">Select Product</label>
+        <input type="text" name="products_search" placeholder="Start typing..." id="products_search-"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        hx-get="{% url 'hx_search_items' %}"
+        hx-trigger="keyup[this.value.length > 2] changed delay:500ms"
+        hx-target="this"
+        hx-select="#items-list"
+        hx-push-url="false"
+        hx-swap="afterend transition:true"
+        hx-on:htmx:before-request="let ul = htmx.find(this.parentNode, 'ul'); if (ul != undefined){this.parentNode.removeChild(ul);};">
+        {% include 'components/itemsDropdownSearch.html' %}
+    </div>
+    <div class="w-[25%]">
+        <label for="product_price-" class="block mb-2 text-sm font-medium text-gray-900 ">Product price, $</label>
+        <input required type="number" step="0.01" min="0" name="product_prices" placeholder="Price" id="product_price-"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+            {% if product_price_error %} border-action-danger {% else %} border-active-dimmed {% endif %}"
+        hx-on:keyup="updateCost()"
+        x-on:change="updateCost()">
+        {% if product_price_error %}
+            <span class="text-action-danger">{{ product_price_error }}</span>            
+        {% endif %}
+    </div>
+    <div class="w-[25%]">
+        <label for="quantity-" class="block mb-2 text-sm font-medium text-gray-900 ">Quantity</label>
+        <input required type="number" min="1" max="1000" name="quantities" placeholder="Quantity" id="quantity-"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+            {% if quantity_error %} border-action-danger {% else %} border-active-dimmed {% endif %}"
+        hx-on:keyup="updateCost()"
+        x-on:change="updateCost()">
+        {% if quantity_error %}
+            <span class="text-action-danger">{{ quantity_error }}</span>            
+        {% endif %}          
+    </div>
+    <div class="w-[25%]">
+        <label for="cost-" class="block mb-2 text-sm font-medium text-gray-900 ">Cost, $</label>
+        <input type="number" step="0.01" min="0" name="cost" placeholder="0.00" id="cost-" disabled
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+    </div>
+    <div class="">
+        <button type="button" class="text-gray-800 p-2.5
+            rounded-xl hover:cursor-pointer hover:bg-active-dimmed"
+            x-on:click="
+                deleteOrderItemComponent($el.closest('[data-order-item-component]'));
+                if (document.querySelectorAll('[data-order-item-component]').length == 1) {
+                    showNewProds = false;
+                }
+            " title="Remove">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+            </svg>  
+        </button>
+    </div>
+</div>
+<!-- end of template -->
+<!-- template for remove order item confirmation -->
+<div data-remove-order-item-confirmation data-remove-order-item-confirmation-template class="flex items-center flex-col border border-action-danger rounded-lg" style="display: none;">
+    <h2 class="text-md font-semibold"></h2>
+    <span class="flex space-x-5 my-1">
+        <button class="border border-action-warning px-3 py-1.5
+            my-auto rounded-lg hover:translate-y-[-3px] transitiopn transform duration-200 ease-in-out hover:cursor-pointer"
+            type="button"
+            x-on:click="$el.closest('[data-remove-order-item-confirmation]').remove()">
+            Cancel
+        </button>
+        <button class="bg-action-danger px-3 py-1.5 rounded-lg text-white hover:bg-red-800
+            hover:translate-y-[-3px] transitiopn transform duration-200 ease-in-out hover:cursor-pointer"
+            type="button"
+            data-confirm-btn
+            hx-select="#order-wrapper"
+            hx-target="#order-wrapper"
+            hx-swap="outerHTML transition:true"
+            >
+            Delete
+        </button>
+    </span>
+</div>
+<!-- end if template -->
+<div id="order-wrapper" class="wrapper w-full grid xl:grid-cols-2 gap-5 mx-auto"
+    x-init="$nextTick(() => {
+        var btn = document.getElementById('returnBtn');
+        var prevUrl = getCookie('prevUrl');
+        if (prevUrl !== undefined && btn !== null) {
+            btn.setAttribute('hx-get', prevUrl);
+        }
+    })">
+    {% if order %}
+        {% include 'partials/editOrderForm.html' %}
+        <div class="orders bg-secondary p-3 rounded-xl h-fit" x-data="{showNewProds: false}">
+            <div>
+                <h1 class="text-2xl font-normal text-gray-600">
+                    Products in Order
+                </h1>
+                <hr>
+                <div class="grid grid-cols-1 gap-3 mt-3">
+                    {% for item in order.items.all %}
+                        <div class="flex items-end gap-2" data-order-item-component id="orderItemComponent-1" data-order-item-id="{{item.id}}">
+                            <div class="w-full">
+                                <label for="prod_name" class="block mb-2 text-sm font-medium text-gray-900 ">Product name</label>
+                                <input disabled type="text" name="prod_name" placeholder="Client first name" id="prod_name" value="{{ item.product.name }}"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:border-none">
+                            </div>
+                            <div class="w-full">
+                                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 ">Product SKU</label>
+                                <input disabled type="text" name="first_name" placeholder="Client first name" id="first_name" value="{{ item.product.sku }}"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:border-none">
+                            </div>
+                            <div class="w-[50%]">
+                                <label for="product_price-1" class="block mb-2 text-sm font-medium text-gray-900 ">Price, $</label>
+                                <input required type="number" step="0.01" min="0" name="product_prices" placeholder="Price" id="product_price-1" value="{{ item.ordered_price }}"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                                    {% if product_price_error %} border-action-danger {% else %} border-active-dimmed {% endif %}"
+                                hx-on:keyup="updateCost()"
+                                x-on:change="updateCost()">
+                                {% if product_price_error %}
+                                    <span class="text-action-danger">{{ product_price_error }}</span>            
+                                {% endif %}
+                            </div>
+                            <div class="w-[50%]">
+                                <label for="quantity-1" class="block mb-2 text-sm font-medium text-gray-900 ">Quantity</label>
+                                <input required type="number" min="1" max="1000" name="quantities" placeholder="Quantity" id="quantity-1" value="{{ item.quantity }}"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                                    {% if quantity_error %} border-action-danger {% else %} border-active-dimmed {% endif %}"
+                                hx-on:keyup="updateCost()"
+                                x-on:change="updateCost()">
+                                {% if quantity_error %}
+                                    <span class="text-action-danger">{{ quantity_error }}</span>            
+                                {% endif %}          
+                            </div>
+                            <div class="w-[50%]">
+                                <label for="cost-1" class="block mb-2 text-sm font-medium text-gray-900 ">Cost, $</label>
+                                <input required type="number" step="0.01" min="0" name="costs" placeholder="0.00" id="cost-1" disabled value="{{ item.cost }}"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            </div>
+                            <div class="">
+                                <button type="button" class="text-gray-800 p-2.5
+                                    rounded-xl hover:cursor-pointer hover:bg-active-dimmed"
+                                    x-on:click="removeProductFromOrder($el.closest('[data-order-item-component]'))" title="Remove">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>  
+                                </button>
+                            </div>
+                        </div>
+                        <span class="flex items-center space-x-2" x-show="showNewProds">
+                            <hr class="w-[100%]">
+                            <p class="whitespace-nowrap">New products</p>
+                            <hr class="w-[100%]">
+                        </span>
+                    {% endfor %}
+                    <button type="button" class="w-full mt-2 bg-secondary border-2 border-active-dimmed text-gray-800 text-sm px-3 py-1.5
+                        my-auto rounded-xl hover:cursor-pointer hover:bg-active-dimmed"
+                        x-on:click="copyOrderItemComponent(); showNewProds = true;">
+                        Add new product
+                    </button>
+                </div>
+                <button x-show="showNewProds" type="button" class="mt-2 flex ml-auto justify-end bg-action-success text-white px-5 py-2.5
+                    my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
+                    transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-green-800 disabled:hidden"
+                    x-on:click="copyOrderItemComponent()">
+                    Save changes
+                </button>
+            </div>
+        </div>
+    {% else %}
+    <div class="flex items-center justify-center h-[80vh]">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">404</h1>
+            <h2 class="text-2xl font-medium text-gray-600 mb-4">Order does not exist</h2>
+            <p class="text-gray-500">The requested order could not be found.</p>
+            <div class="mt-4">
+                <a href="{% url 'orders_view' %}" class="inline-block bg-accent-secondary hover:bg-yellow-500 text-black font-bold py-2.5 px-5 rounded-lg">
+                    Return to All Orders
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block additional_javascript %}
+<script>
+    function removeProductFromOrder(component) {
+        let orderItemId = component.getAttribute('data-order-item-id');
+        let hx_delete_url = `hx-remove-item/${orderItemId}/`;
+        let orderItemProdName = component.querySelector('[name="prod_name"]').value;
+        let removeConfirmationElem = document.querySelector('[data-remove-order-item-confirmation-template]').cloneNode(true);
+        let confirmBtn = removeConfirmationElem.querySelector('[data-confirm-btn]');
+        removeConfirmationElem.removeAttribute('data-remove-order-item-confirmation-template');
+        removeConfirmationElem.querySelector('h2').innerText = `Are you sure you want to remove ${orderItemProdName} from order?`;
+        removeConfirmationElem.removeAttribute('style');
+        confirmBtn.setAttribute('hx-delete', hx_delete_url);
+        htmx.process(confirmBtn);
+        component.parentNode.insertBefore(removeConfirmationElem, component.nextSibling);
+    }
+</script>
+{% endblock additional_javascript %}

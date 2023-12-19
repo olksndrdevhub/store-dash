@@ -1,0 +1,38 @@
+<ul id="items-list" class="absolute z-50 top-full w-[100%] max-h-[200px] overflow-y-auto bg-gray-100 text-sm rounded-md"
+    x-on:click.outside="$el.parentNode.removeChild($el)"
+    >
+    {% for item in items %}
+        <li class="grid w-full grid-cols-2 text-justify py-1 px-2 cursor-pointer hover:bg-primary"
+            hx-on:click="processSelectedItem(this, this.parentNode.previousElementSibling)" data-item-id="{{item.id}}"
+            {% if item.name %}
+                data-item-name="{{item.name}}"
+            {% elif item.first_name %}
+                data-item-name="{{item.first_name}} {{item.last_name}}"
+            {% endif %}
+            {% if item.price %}
+                data-item-price="{{item.price}}"
+            {% endif %}
+
+            {% if item.delivery_address %}
+                data-item-address="{{item.delivery_address}}"
+            {% endif %}
+            >
+           {% for property, value in item.items %}
+                {% if property == 'first_name' or property == 'last_name' %}
+                    {% if property == 'first_name' %}
+                        <span class="max-w-max">{{ value }}
+                    {% elif property == 'last_name' %}
+                        {{ value }}</span>
+                    {% endif %}
+                {% elif property != 'id' and property != 'price' and property != 'delivery_address' %}
+                    <span class="max-w-max">{{ value }}</span>
+                {% endif %}
+            {% endfor %}
+        </li>
+    {% endfor %}
+    {% if not_found %}
+        <li class="grid w-full grid-cols-2 text-justify py-1 px-2 cursor-not-allowed hover:bg-primary">
+            <span class="max-w-max">Nothing found...</span>
+        </li>
+    {% endif %}
+</ul>

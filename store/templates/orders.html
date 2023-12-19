@@ -16,7 +16,8 @@
     <div id="create-form-spawn" class="bg-secondary p-3 rounded-xl h-fit mb-5"
         x-show="showCreateForm"
         x-transition
-        x-cloak>
+        x-cloak
+        x-on:close-create-form="showCreateForm = false; htmx.find('#create-order-form').reset();">
         {% include 'partials/createOrderForm.html' %}
     </div>
     <div class="bg-secondary p-3 rounded-xl h-fit" id="orders-container">
@@ -52,7 +53,7 @@
                             </svg>
                         </div>
                         <input type="search" name="search" class="block w-80 max-w-md p-2.5 pl-10 mx-auto text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50" placeholder="Type to search..." required
-                            hx-get="{% url 'orders_view' %}"
+                            hx-get="{% custom_urlencode url order_by=order_by filter_status=filter_status filter_payed=filter_payed page=orders.number %}"
                             hx-push-url="true"
                             hx-trigger="keyup changed delay:500ms, search" 
                             hx-target="#orders-table"
@@ -66,9 +67,9 @@
                     </div>
                 </div>
                 <span class="flex flex-col">
-                    <label for="filter_category" class="text-sm">Status</label>
+                    <label for="filter_status" class="text-sm">Status</label>
                     <select class="px-3 py-1 text-sm rounded-lg {% if filter_status %}bg-green-200{% else %}bg-green-50{% endif %}" title="Status Filter" name="filter_status" id="filter_status"
-                        hx-get="{% url 'orders_view' %}"
+                        hx-get="{% custom_urlencode url search=search order_by=order_by filter_payed=filter_payed page=orders.number %}"
                         hx-target="#orders-container"
                         hx-select="#orders-container"
                         hx-swap="outerHTML transition:true"
@@ -84,7 +85,7 @@
                 <span class="flex flex-col">
                     <label for="filter_payed" class="text-sm">Payed</label>
                     <select class="px-3  py-1 text-sm rounded-lg {% if filter_payed %}bg-green-200{% else %}bg-green-50{% endif %}" title="Payed Filter" name="filter_payed" id="filter_payed"
-                        hx-get="{% url 'orders_view' %}"
+                        hx-get="{% custom_urlencode url search=search order_by=order_by filter_status=filter_status page=orders.number %}"
                         hx-target="#orders-container"
                         hx-select="#orders-container"
                         hx-swap="outerHTML transition:true"
@@ -112,7 +113,7 @@
             </a>
         </span>
         <div class="relative overflow-x-auto">
-            <table class="w-full text-sm table-fixed text-left text-gray-500 dark:text-gray-400" id="products-table">
+            <table class="w-full text-sm table-auto text-left text-gray-500 dark:text-gray-400" id="orders-table">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr class="">
                         <th scope="col" class="px-6 py-3">
@@ -216,19 +217,27 @@
                                 {{ order_item.client }}
                             </th>
                             <td class="px-6 py-4">
-                                {{ order_item.status }}
+                                {{ order_item.get_status_display }}
                             </td>
                             <td class="px-6 py-4">
                                 {{ order_item.total_cost }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ order_item.payment_status }}
+                                {% if order_item.payment_completed %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="green" stroke-width="1.5" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>  
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                {% endif %}
                             </td>
                             <td class="px-6 py-4">
-                                {{ order_item.created }}
+                                {{ order_item.created|date:"d.m.Y H:i" }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ order_item.updated }}
+                                {{ order_item.updated|date:"d.m.Y H:i" }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -243,7 +252,7 @@
                             {% if orders.has_previous %}
                                 <li class="w-auto flex justify-center py-2 px-4 rounded-xl hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
                                     {% url 'orders_view' as url %}
-                                    hx-get="{% custom_urlencode url search=search order_by=order_by filter_category=filter_category filter_color=filter_color page=products.previous_page_number %}"
+                                    hx-get="{% custom_urlencode url search=search order_by=order_by filter_status=filter_status filter_payed=filter_payed page=orders.previous_page_number %}"
                                     hx-target="#orders-container"
                                     hx-select="#orders-container"
                                     hx-swap="outerHTML show:#header:top transition:true"
@@ -263,21 +272,21 @@
                                     </span>
                                 </li>
                             {% endif %}
-                            {% for i in page_range|default_if_none:products.paginator.get_elided_page_range %}
-                                {% if i == products.paginator.ELLIPSIS %}
+                            {% for i in page_range|default_if_none:orders.paginator.get_elided_page_range %}
+                                {% if i == orders.paginator.ELLIPSIS %}
                                     <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-400 hover:cursor-default" aria-current="page">
                                         <span class="">{{ i }}</span>
                                     </li>
                                 {% else %}
-                                    {% if products.number == i %}
+                                    {% if orders.number == i %}
                                         <li class="w-auto flex justify-center py-2 px-4 rounded-xl text-gray-900 bg-green-200 hover:cursor-default" aria-current="page">
                                             <span class="">{{ i }}</span>
                                         </li>
                                     {% else %}
                                         <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
-                                            hx-get="{% custom_urlencode url search=search order_by=order_by filter_category=filter_category filter_color=filter_color page=i %}"
-                                            hx-target="#products-container"
-                                            hx-select="#products-container"
+                                            hx-get="{% custom_urlencode url search=search order_by=order_by filter_status=filter_status filter_payed=filter_payed page=i %}"
+                                            hx-target="#orders-container"
+                                            hx-select="#orders-container"
                                             hx-swap="outerHTML show:#header:top transition:true"
                                             hx-push-url="true"
                                             hx-indicator="#indicator"
@@ -287,11 +296,11 @@
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
-                            {% if products.has_next %}
+                            {% if orders.has_next %}
                                 <li class="w-auto flex justify-center py-2 px-4 rounded-xl bg-[--secondary] hover:origin-top hover:translate-y-[-3px] transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-action-success hover:text-white"
-                                    hx-get="{% custom_urlencode url search=search order_by=order_by filter_category=filter_category filter_color=filter_color page=products.next_page_number %}"
-                                    hx-target="#products-container"
-                                    hx-select="#products-container"
+                                    hx-get="{% custom_urlencode url search=search order_by=order_by filter_status=filter_status filter_payed=filter_payed page=orders.next_page_number %}"
+                                    hx-target="#orders-container"
+                                    hx-select="#orders-container"
                                     hx-swap="outerHTML show:#header:top transition:true"
                                     hx-push-url="true"
                                     hx-indicator="#indicator"
@@ -313,7 +322,7 @@
                     </nav>
                 {% endif %}
             </div>
-            <span class="text-sm text-gray-400">Total: {{ products.paginator.count }} items</span>
+            <span class="text-sm text-gray-400">Total: {{ orders.paginator.count }} items</span>
         </div>
 
     </div>
@@ -321,4 +330,5 @@
 {% endblock content %}
 
 {% block additional_javascript %}
+
 {% endblock additional_javascript %}

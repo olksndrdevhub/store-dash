@@ -77,8 +77,8 @@
             </div>
         </div>
         <div class="flex justify-between">
-            <span class="text-sm text-gray-400">Created: {{ client.created }}</span>
-            <span class="text-sm text-gray-400">Updated: {{ client.updated }}</span>
+            <span class="text-sm text-gray-400">Created: {{ client.created|date:"d.m.Y H:i" }}</span>
+            <span class="text-sm text-gray-400">Updated: {{ client.updated|date:"d.m.Y H:i" }}</span>
         </div>
         <div class="" x-data="{showDeleteConfirmation : false}">
             <div x-show="!showDeleteConfirmation" x-cloak

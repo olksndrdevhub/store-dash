@@ -188,7 +188,7 @@
                                 {{ client_item.delivery_address }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ client_item.created }}
+                                {{ client_item.created|date:"d.m.Y H:i" }}
                             </td>
                         </tr>
                     {% endfor %}
