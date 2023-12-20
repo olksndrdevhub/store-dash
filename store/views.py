@@ -2,6 +2,7 @@ from django.shortcuts import render, resolve_url, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpRequest
+from django.db import models
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Product, Category, Color, Client, Order, OrderItem
@@ -349,6 +350,9 @@ def orders_view(request):
         )
 
     if "order_by" in request.GET and request.GET.get("order_by").strip() != "":
+        orders = orders.annotate(
+            total=models.Sum(models.F("items__ordered_price") * models.F("items__quantity"))
+        )
         context["order_by"] = request.GET.get("order_by")
         orders = orders.order_by(request.GET.get("order_by"))
 
