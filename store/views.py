@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.shortcuts import render, resolve_url, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -422,7 +424,7 @@ def order_item_view(request, pk):
         result = update_or_create_order(request, pk)
         messages.add_message(request, result["status"], result["message"])
         context["order"] = Order.objects.get(pk=pk)
-        return render(request, "partials/editOrderForm.html", context)
+        return render(request, "order_page.html", context)
 
     if request.htmx and request.method == "DELETE":
         order.delete()
@@ -476,11 +478,35 @@ def update_or_create_order(request: HttpRequest, id: int | None) -> dict:
             order.payment_completed = True if request.POST.get("payment_completed", False) == "on" else False
             order.delivery_address = request.POST.get("address", None)
             order.save()
+            # TODO update client info
         except Order.DoesNotExist:
             return {"message": "Order does not exist!", "status": messages.ERROR}
         except Exception as e:
             print(e)
             return {"message": "An error occurred while updating order!", "status": messages.ERROR}
+        if "update_items" in request.POST:
+            product_ids = request.POST.getlist("product_ids", [])
+            product_quantities = request.POST.getlist("quantities", [])
+            product_prices = request.POST.getlist("product_prices", [])        
+            zipped_data = zip(product_ids, product_quantities, product_prices)
+            try:
+                for product_id, quantity, price in zipped_data:
+                    product = Product.objects.get(id=int(product_id))
+                    order_item, created = OrderItem.objects.get_or_create(
+                        order=order,
+                        product=product,
+                        defaults={
+                            "quantity": int(quantity),
+                            "ordered_price": Decimal(price)
+                        }
+                    )
+                    if not created:
+                        order_item.quantity = int(quantity)
+                        order_item.ordered_price = Decimal(price)
+                        order_item.save()
+            except Exception as e:
+                print(e)
+                return {"message": "An error occurred while updating order items!", "status": messages.ERROR}
         return {"message": "Order updated successfully!", "status": messages.SUCCESS}
 
 
@@ -490,7 +516,7 @@ def hx_remove_item_from_order(request, pk, item_pk):
     try:
         order = Order.objects.get(pk=pk)
         order_item = OrderItem.objects.get(pk=item_pk, order=order)
-        # order_item.delete()
+        order_item.delete()
         messages.add_message(request, messages.SUCCESS, "Order item deleted successfully!")
         return redirect("order_item_view", pk=pk)
     except Order.DoesNotExist:

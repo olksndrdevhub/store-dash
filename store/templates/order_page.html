@@ -98,16 +98,18 @@
         }
     })">
     {% if order %}
-        {% include 'partials/editOrderForm.html' %}
-        <div class="orders bg-secondary p-3 rounded-xl h-fit" x-data="{showNewProds: false}">
-            <div>
-                <h1 class="text-2xl font-normal text-gray-600">
-                    Products in Order
-                </h1>
-                <hr>
+    {% include 'partials/editOrderForm.html' %}
+    <div class="orders bg-secondary p-3 rounded-xl h-fit" x-data="{showNewProds: false}">
+        <div>
+            <h1 class="text-2xl font-normal text-gray-600">
+                Products in Order
+            </h1>
+            <hr>
+            <form id="newProdForm">
                 <div class="grid grid-cols-1 gap-3 mt-3">
                     {% for item in order.items.all %}
                         <div class="flex items-end gap-2" data-order-item-component id="orderItemComponent-1" data-order-item-id="{{item.id}}">
+                            <input type="hidden" name="product_ids" value="{{item.product.id}}">
                             <div class="w-full">
                                 <label for="prod_name" class="block mb-2 text-sm font-medium text-gray-900 ">Product name</label>
                                 <input disabled type="text" name="prod_name" placeholder="Client first name" id="prod_name" value="{{ item.product.name }}"
@@ -161,20 +163,26 @@
                             <hr class="w-[100%]">
                         </span>
                     {% endfor %}
+
                     <button type="button" class="w-full mt-2 bg-secondary border-2 border-active-dimmed text-gray-800 text-sm px-3 py-1.5
                         my-auto rounded-xl hover:cursor-pointer hover:bg-active-dimmed"
                         x-on:click="copyOrderItemComponent(); showNewProds = true;">
                         Add new product
                     </button>
                 </div>
-                <button x-show="showNewProds" type="button" class="mt-2 flex ml-auto justify-end bg-action-success text-white px-5 py-2.5
+                <button x-show="showNewProds" type="submit" name="update_items" class="mt-2 flex ml-auto justify-end bg-action-success text-white px-5 py-2.5
                     my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
                     transition transform duration-200 ease-in-out hover:cursor-pointer hover:bg-green-800 disabled:hidden"
-                    x-on:click="copyOrderItemComponent()">
+                    hx-post="{% url 'order_item_view' order.id %}" 
+                    hx-target="#order-wrapper"
+                    hx-select="#order-wrapper"
+                    hx-swap="outerHTML transition:true"
+                    >
                     Save changes
                 </button>
-            </div>
+            </form>
         </div>
+    </div>
     {% else %}
     <div class="flex items-center justify-center h-[80vh]">
         <div class="text-center">
