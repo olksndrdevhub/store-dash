@@ -333,10 +333,12 @@ def orders_view(request):
     context: dict = {}
     context["orders_count"] = Order.objects.all().count()
     context["order_statuses"] = Order.OrderStatus.choices
+    context["order_by"] = "-created"
     orders = Order.objects.all()
 
     if "search" in request.GET and request.GET.get("search").strip() != "":
         context["search"] = request.GET.get("search")
+        print(context)
         query = request.GET.get("search")
         orders = (
             orders.filter(client__first_name__icontains=query)
@@ -345,6 +347,10 @@ def orders_view(request):
             | orders.filter(client__phone_number__icontains=query)
             | orders.filter(client__delivery_address__icontains=query)
         )
+
+    if "order_by" in request.GET and request.GET.get("order_by").strip() != "":
+        context["order_by"] = request.GET.get("order_by")
+        orders = orders.order_by(request.GET.get("order_by"))
 
     if "filter_status" in request.GET and request.GET.get("filter_status").strip() != "":
         context["filter_status"] = request.GET.get("filter_status")
