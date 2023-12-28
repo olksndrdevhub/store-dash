@@ -212,12 +212,12 @@
         }
     
         function copyOrderItemComponent() {
-            var orderItemComponents = document.querySelectorAll('[data-order-item-component]');
+            let orderItemsWrapper = document.getElementById('orderItemsWrapper');
+            var orderItemComponents = orderItemsWrapper.querySelectorAll('[data-order-item-component]');
             var orderItemComponentTemplate = document.querySelector('[data-order-item-component-template]');
             var lastOrderItemComponent = orderItemComponents[orderItemComponents.length - 1];
-            var lastItemId = lastOrderItemComponent.getAttribute('id').split('-')[1];
-            // convert to number
-            lastItemId = parseInt(lastItemId);
+            let lastWrapperChild = orderItemsWrapper.lastElementChild;
+            var lastItemId = parseInt(lastOrderItemComponent.getAttribute('id').split('-')[1]);
             var orderItemComponentCopy = orderItemComponentTemplate.cloneNode(true);
             orderItemComponentCopy.removeAttribute('data-order-item-component-template');
             orderItemComponentCopy.setAttribute('data-order-item-component', '');
@@ -234,7 +234,7 @@
                 input.setAttribute('id', inputId + (lastItemId + 1));
                 input.value = '';
             });
-            lastOrderItemComponent.parentNode.insertBefore(orderItemComponentCopy, lastOrderItemComponent.parentNode.lastChild.previousSibling);
+            orderItemsWrapper.insertBefore(orderItemComponentCopy, lastWrapperChild.nextSibling);
             htmx.process(orderItemComponentCopy);
         }
     

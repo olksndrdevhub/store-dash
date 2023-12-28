@@ -708,6 +708,10 @@ video {
   margin-top: 1.25rem;
 }
 
+.mr-auto {
+  margin-right: auto;
+}
+
 .block {
   display: block;
 }
@@ -943,6 +947,10 @@ video {
   align-items: center;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+
 .justify-end {
   justify-content: flex-end;
 }
@@ -1003,10 +1011,6 @@ video {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.25rem * var(--tw-space-y-reverse));
-}
-
-.self-end {
-  align-self: flex-end;
 }
 
 .self-center {
@@ -1179,9 +1183,9 @@ video {
   background-color: transparent;
 }
 
-.bg-gray-400 {
+.bg-action-warning {
   --tw-bg-opacity: 1;
-  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+  background-color: rgb(var(--color-action-warning) / var(--tw-bg-opacity));
 }
 
 .fill-action-danger {
@@ -1489,6 +1493,14 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.decoration-accent {
+  text-decoration-color: rgb(var(--color-accent) / 1);
+}
+
+.decoration-2 {
+  text-decoration-thickness: 2px;
+}
+
 .placeholder-gray-600::-moz-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(75 85 99 / var(--tw-placeholder-opacity));
@@ -1677,6 +1689,11 @@ input.valid {
 
 /* Profile page end css */
 
+.fadeOut {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
 .after\:absolute::after {
   content: var(--tw-content);
   position: absolute;
@@ -1830,6 +1847,10 @@ input.valid {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.hover\:underline:hover {
+  text-decoration-line: underline;
 }
 
 .focus\:border-accent-secondary:focus {

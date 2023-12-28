@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.shortcuts import render, resolve_url, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.db import models
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -222,7 +222,7 @@ def clients_view(request):
         context["submitted_phone"] = phone_number
         context["submitted_address"] = delivery_address
 
-        errors = sanitize_post_data(data)
+        errors = sanitize_post_data(request)
         context.update(errors)
         for error in errors.values():
             messages.add_message(request, messages.ERROR, error)
@@ -310,7 +310,7 @@ def client_item_view(request, pk):
     if request.method == "POST":
         data = request.POST
         print(data)
-        errors = sanitize_post_data(data)
+        errors = sanitize_post_data(request)
         context.update(errors)
         for error in errors.values():
             messages.add_message(request, messages.ERROR, error)
@@ -478,7 +478,6 @@ def update_or_create_order(request: HttpRequest, id: int | None) -> dict:
             order.payment_completed = True if request.POST.get("payment_completed", False) == "on" else False
             order.delivery_address = request.POST.get("address", None)
             order.save()
-            # TODO update client info
         except Order.DoesNotExist:
             return {"message": "Order does not exist!", "status": messages.ERROR}
         except Exception as e:
@@ -510,22 +509,24 @@ def update_or_create_order(request: HttpRequest, id: int | None) -> dict:
         return {"message": "Order updated successfully!", "status": messages.SUCCESS}
 
 
-def hx_remove_item_from_order(request, pk, item_pk):
+def hx_remove_order_item(request: HttpRequest, pk: int):
+    # original url
+    resp_data = {"status": "FAIL"}
     if not request.user.is_authenticated:
         messages.add_message(request, messages.ERROR, "You must be logged in to perform this action!")
     try:
-        order = Order.objects.get(pk=pk)
-        order_item = OrderItem.objects.get(pk=item_pk, order=order)
+        order_item = OrderItem.objects.get(pk=pk)
         order_item.delete()
         messages.add_message(request, messages.SUCCESS, "Order item deleted successfully!")
-        return redirect("order_item_view", pk=pk)
-    except Order.DoesNotExist:
-        messages.add_message(request, messages.ERROR, "Order does not exist!")
+        return HttpResponse(status=200)
     except OrderItem.DoesNotExist:
         messages.add_message(request, messages.ERROR, "Order Item does not exist!")
+        response = HttpResponse(status=404)
     except Exception as e:
         print(e)
         messages.add_message(request, messages.ERROR, "An error occurred while deleting order item!")
+        response = HttpResponse(status=400)
+    return response
 
 
 def hx_search_items(request):

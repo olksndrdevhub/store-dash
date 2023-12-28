@@ -147,3 +147,8 @@
     height: 2em;
 }
 /* Profile page end css */
+
+.fadeOut {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}

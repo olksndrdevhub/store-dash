@@ -37,7 +37,7 @@
             <div class="w-full">
                 <label for="total_cost" class="block mb-2 text-sm font-medium text-gray-900 ">Total cost, $</label>
                 <input type="number" step="0.01" min="0" name="total_cost" placeholder="0.00" id="total_cost" disabled value="{{ order.total_cost }}"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent-secondary focus:border-accent-secondary block w-full p-2.5">
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent-secondary focus:border-accent-secondary block w-full p-2.5 disabled:border-none">
             </div>
             <div class="w-full">
                 <div class="mx-auto w-fit h-full flex flex-col items-left justify-between">
@@ -53,35 +53,39 @@
         </div>
         <div class="flex gap-2">
             <div class="w-full">
-                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 ">Client first name</label>
-                <input required type="text" name="first_name" placeholder="Client first name" id="first_name" value="{{ order.client.first_name }}"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 ">Client name</label>
+                <a class="flex text-accent w-fit"
+                    href="{% url 'client_item_view' order.client.id %}"
+                    target="_blank"
+                    >
+                    <h2 class="text-2xl font-bold text-gray-900 hover:underline decoration-accent decoration-2 hover:cursor-pointer">{{ order.client.full_name }}</h2>
+                    <svg class="hover:cursor-pointer"  width="32" height="32" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="currentColor" fill-rule="evenodd" d="M3.646 11.354a.5.5 0 0 1 0-.707L10.293 4H6a.5.5 0 0 1 0-1h5.5a.5.5 0 0 1 .5.5V9a.5.5 0 0 1-1 0V4.707l-6.646 6.647a.5.5 0 0 1-.708 0" clip-rule="evenodd"/>
+                    </svg>
+                </a>
             </div>
-            <div class="w-full">
+            <!-- <div class="w-full">
                 <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 ">Client last name</label>
                 <input required type="text" name="last_name" placeholder="Client last name" id="last_name" value="{{ order.client.last_name }}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-            </div>
+            </div> -->
         </div>
         <div class="flex gap-2">
             <div class="w-full">
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 ">Client email</label>
-                <input required type="email" name="email" placeholder="Client email" id="email" value="{{ order.client.email }}"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <input disabled type="email" name="email" placeholder="Client email" id="email" value="{{ order.client.email }}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:border-none">
             </div>
             <div class="w-full">
                 <label for="phone_number" class="block mb-2 text-sm font-medium text-gray-900 ">Client phone number</label>
-                <input required type="tel" name="phone_number" placeholder="Client phone number" id="phone_number" value="{{ order.client.phone_number }}"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
-                    {% if phone_number_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">
-                {% if phone_number_error %}
-                    <span class="text-action-danger">{{ phone_number_error }}</span>            
-                {% endif %}
+                <input disabled type="tel" name="phone_number" placeholder="Client phone number" id="phone_number" value="{{ order.client.phone_number }}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:border-none">
+
             </div>
         </div>
         <div class="flex gap-2">
             <div class="w-full">
-                <label for="address" class="block mb-2 text-sm font-medium text-gray-900 ">Enter delivery address</label>
+                <label for="address" class="block mb-2 text-sm font-medium text-gray-900 ">Delivery address</label>
                 <textarea required type="text" name="address" placeholder="Delivery address" id="address"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
                     {% if address_error %} border-action-danger {% else %} border-active-dimmed {% endif %}">{% if order.delivery_address %}{{ order.delivery_address }}{% endif %}</textarea>
@@ -103,7 +107,7 @@
                     transition transform duration-200 ease-in-out hover:cursor-pointer"
                     x-on:click="showDeleteConfirmation = true"
                     >
-                    Delete
+                    Delete order
                 </button>
                 <button type="button" class="bg-action-success text-white px-5 py-2.5
                     my-auto rounded-xl hover:origin-top hover:translate-y-[-3px] 
