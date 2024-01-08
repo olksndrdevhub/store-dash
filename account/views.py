@@ -98,8 +98,9 @@ def signout_view(request):
     Just Sign Out view
     '''
     logout(request)
+    response = redirect('signin_view')
     messages.add_message(request, messages.WARNING, 'You was sign out!')
-    return redirect('signin_view')
+    return response
 
 
 def signin_view(request):
@@ -107,7 +108,12 @@ def signin_view(request):
     Sign In Page
     '''
     context = {}
+    if request.user.is_authenticated:
+        return redirect('home_view')
     template_name = 'signin.html'
+
+    response = render(request, template_name, context)
+
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -117,12 +123,16 @@ def signin_view(request):
             login(request, user)
             messages.add_message(request, messages.SUCCESS,
                                  'You successfully log in!')
-            response = HttpResponse()
-            response['HX-Location'] = reverse('home_view')
+            response = redirect('home_view')
+            response['HX-Replace-Url'] = reverse('home_view')
             return response
         messages.add_message(request, messages.ERROR,
                              'Error! Wrong email or password...')
-    return render(request, template_name, context)
+        
+        response['HX-Retarget'] = 'form'
+        response['HX-Reselect'] = 'form'
+
+    return response
 
 
 def signup_view(request):

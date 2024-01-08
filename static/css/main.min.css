@@ -708,10 +708,6 @@ video {
   margin-top: 1.25rem;
 }
 
-.mr-auto {
-  margin-right: auto;
-}
-
 .block {
   display: block;
 }
@@ -947,10 +943,6 @@ video {
   align-items: center;
 }
 
-.justify-start {
-  justify-content: flex-start;
-}
-
 .justify-end {
   justify-content: flex-end;
 }
@@ -1181,11 +1173,6 @@ video {
 
 .bg-transparent {
   background-color: transparent;
-}
-
-.bg-action-warning {
-  --tw-bg-opacity: 1;
-  background-color: rgb(var(--color-action-warning) / var(--tw-bg-opacity));
 }
 
 .fill-action-danger {

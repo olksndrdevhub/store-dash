@@ -3,16 +3,19 @@
 {% block title %}Sign in |{% endblock title %}
 
 {% block content %}
-<div class="bg-secondary w-[80vw] sm:w-[60vw] lg:w-[40vw] xl:w-[30vw] mx-auto py-5 sm:py-14 px-5 sm:px-10 rounded-xl" hx-boost="true">
+<div class="bg-secondary w-[80vw] sm:w-[60vw] lg:w-[40vw] xl:w-[30vw] mx-auto py-5 sm:py-14 px-5 sm:px-10 rounded-xl"
+    hx-boost="true"
+    hx-target="main"
+    hx-select="main"
+    hx-swap="outerHTML transition:true"
+    hx-select-oob="#navBar"
+    >
     <span class="text-center">
         <h2 class="text-3xl font-extrabold mb-5">User Login</h2>
         <p class="text-md font-normal mb-5">Hey, Enter your credentials to get sign in to your account</p>
     </span>
     <form action="" 
         hx-post="{% url 'signin_view' %}"
-        hx-target="form"
-        hx-swap="outerHTML"
-        hx-select="form"
         class="flex flex-col space-y-5 py-10">
         <input type="email" name="email" placeholder="Enter Email" id="email" class="text-sm border-active-dimmed border-2 rounded-xl block w-full p-3 placeholder-gray-600 hover:cursor-text disabled:cursor-not-allowed disabled:text-gray-60">
         <input type="password" name="password" placeholder="Enter Password" id="password" class="text-sm border-active-dimmed border-2 rounded-xl block w-full p-3 placeholder-gray-600 hover:cursor-text disabled:cursor-not-allowed disabled:text-gray-60">

@@ -27,10 +27,13 @@
     </style>
     {% block additional_css %}{% endblock additional_css %}
 </head>
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="bg-primary"
+<body id="main" 
+    class="bg-primary"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-on::after-swap="updateCsrfToken(event.detail);" 
     hx-on:messages="console.log('messages event in htmx', event.detail.value); event.detail.value.forEach((message) => {createToast(message)}); removeAllToasts();">
 
-    <nav class=" bg-primary border-gray-200"
+    <nav id="navBar" class=" bg-primary border-gray-200"
         x-data="{ showMenu: false }"
         x-init="showMenu = window.innerWidth > 768"
         x-on:resize.window="window.innerWidth > 768 ? showMenu = true : showMenu = false">
@@ -58,8 +61,11 @@
                 x-show="showMenu"
                 x-transition
                 x-cloak
-                hx-push-url="true"
                 hx-boost="true"
+                hx-push-url="true"
+                hx-target="main"
+                hx-select="main"
+                hx-select-oob="#navBar"
                 hx-swap="outerHTML transition:true">
                 <ul class="font-medium flex flex-col p-4 md:p-0 rounded-xl bg-secondary md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-primary">
                     {% if user.is_authenticated %}
@@ -93,6 +99,7 @@
         </div>
     </nav>
     <main class="p-5">
+        <div id="csrf_token" style="display: none;">{{csrf_token}}</div>
         <!-- {% include 'breadcrumbs.html' %} -->
         {% block content %}
         {% endblock content %}
@@ -124,6 +131,15 @@
                 "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
             ))
             return matches ? decodeURIComponent(matches[1]) : undefined
+        }
+
+        function updateCsrfToken(swapSpec) {
+            let newToken = document.getElementById('csrf_token').innerText;
+            let oldTokenHeader = document.body.getAttribute('hx-headers');
+            let oldToken = JSON.parse(oldTokenHeader)['X-CSRFToken'];
+            if (newToken !== oldToken) {
+                document.body.setAttribute('hx-headers', '{"X-CSRFToken": "' + newToken + '"}');
+            }
         }
     </script>
     <script src="{% static 'toasts.js' %}"></script>
